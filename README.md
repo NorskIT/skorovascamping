@@ -29,51 +29,43 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`npm run preview` serves the production build through the Cloudflare Workers runtime. `npm run deploy` performs a direct production deployment for recovery or initial setup; normal deployments should come from Git.
+`npm run preview` serves the production build through the Cloudflare Workers runtime. `npm run deploy:beta` and `npm run deploy` perform direct beta and production deployments for recovery or initial setup; normal deployments come from GitHub Actions.
 
 ## Delivery workflow
 
 1. Create a feature branch and open a pull request against `main`.
-2. GitHub Actions runs the `quality` status check.
-3. Cloudflare Workers Builds creates an isolated `*.workers.dev` preview for the branch.
-4. Review the preview and merge only when all checks are green.
-5. A merge to `main` deploys that commit automatically to production.
+2. GitHub Actions runs the required `quality` status check on the pull request.
+3. Every push to a non-`main` branch is tested and deploys to the shared `skorovasscamping-beta` Worker. The latest successful branch deployment wins.
+4. Review the shared beta site and merge only when all checks are green.
+5. A merge to `main` is tested again and deploys that commit to the `skorovasscamping` production Worker.
 
 Configure a GitHub branch rule for `main` with:
 
 - pull requests required;
 - the `quality` status check required;
-- the Cloudflare Workers Builds check required after its first run;
 - force pushes and branch deletion disabled;
 - zero required approving reviews, so a sole developer can merge after checks pass.
 
 ## Cloudflare setup
 
-Create or sign in to the Cloudflare account that will own the website, then import the public GitHub repository `NorskIT/skorovascamping` under **Workers & Pages**.
+The deployment workflow needs these GitHub repository secrets:
 
-Use these build settings:
+- `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID;
+- `CLOUDFLARE_API_TOKEN`: a scoped token with permission to edit Workers Scripts on that account.
 
-| Setting                   | Value                          |
-| ------------------------- | ------------------------------ |
-| Worker name               | `skorovasscamping`             |
-| Production branch         | `main`                         |
-| Build command             | `npm run build`                |
-| Production deploy command | `npx wrangler deploy`          |
-| Preview deploy command    | `npx wrangler versions upload` |
-| Build variable            | `NODE_VERSION=24.18.0`         |
-
-The committed `wrangler.jsonc` enables Workers preview URLs. Cloudflare creates and manages the deployment token for its native Git integration; do not add Cloudflare credentials to the repository.
+The committed `wrangler.jsonc` defines separate production and beta Workers. Both have temporary `workers.dev` addresses until the custom domains can be attached.
 
 ## Domain cutover
 
 The `.no` domain must be bought from a Norid registrar before production can use it. Recheck availability immediately before purchase.
 
-1. Register `skorovasscamping.no` and enable automatic renewal.
-2. Add the domain as a zone on the website's Cloudflare account.
-3. Replace the registrar's nameservers with the two nameservers assigned by Cloudflare.
-4. Add `skorovasscamping.no` as the Worker's custom production domain.
-5. Add `www.skorovasscamping.no` in Cloudflare DNS and create a permanent redirect to `https://skorovasscamping.no` while preserving path and query string.
-6. Verify HTTPS, the redirect, DNSSEC and the production commit before announcing the site.
+1. Wait until `skorovasscamping.no` is active in Cloudflare after the nameserver change.
+2. Add `skorovasscamping.no` as the production Worker's custom domain.
+3. Add `beta.skorovasscamping.no` as the beta Worker's custom domain.
+4. Add `www.skorovasscamping.no` and create a permanent redirect to `https://skorovasscamping.no` while preserving path and query string.
+5. Verify HTTPS, the redirect, DNSSEC and the deployed production commit before announcing the site.
+
+While nameservers are propagating, use the two `workers.dev` addresses. The placeholder deliberately blocks indexing on both environments; beta must remain non-indexable when production content is opened for indexing.
 
 The existing `.com` website remains untouched during this setup.
 

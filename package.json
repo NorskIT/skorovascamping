@@ -21,7 +21,8 @@
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"gen": "npm run clean:cloudflare && wrangler types",
-		"deploy": "npm run build && wrangler deploy"
+		"deploy": "npm run build && wrangler deploy",
+		"deploy:beta": "npm run build && wrangler deploy --env beta"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

@@ -9,5 +9,18 @@
 		"directory": ".svelte-kit/cloudflare"
 	},
 	"workers_dev": true,
-	"preview_urls": true
+	"preview_urls": true,
+	"vars": {
+		"DEPLOY_ENV": "production"
+	},
+	"env": {
+		"beta": {
+			"name": "skorovasscamping-beta",
+			"workers_dev": true,
+			"preview_urls": true,
+			"vars": {
+				"DEPLOY_ENV": "beta"
+			}
+		}
+	}
 }
