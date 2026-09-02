@@ -16,6 +16,8 @@ npm ci
 npm run dev
 ```
 
+In Cursor or VS Code, open **Run and Debug**, select **SvelteKit: localhost**, and press `F5`. The committed debug profile starts the development server and opens `http://127.0.0.1:5173` with browser debugging enabled.
+
 ## Quality checks
 
 Run the same checks used by GitHub Actions:
