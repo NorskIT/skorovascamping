@@ -1,5 +1,5 @@
 {
-	"name": "skorovasscamping",
+	"name": "skorovascamping",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -21,7 +21,7 @@
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"gen": "npm run clean:cloudflare && wrangler types",
-		"deploy": "npm run build && wrangler deploy",
+		"deploy": "npm run build && wrangler deploy --env=\"\"",
 		"deploy:beta": "npm run build && wrangler deploy --env beta"
 	},
 	"devDependencies": {

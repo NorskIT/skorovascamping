@@ -1,6 +1,6 @@
 # Skorovas Camping
 
-Infrastructure for the new `skorovasscamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
+Infrastructure for the new `skorovascamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
 
 The current page is deliberately a minimal, non-indexable placeholder. Content, translated routes, SEO metadata, contact forms and booking integrations belong to later phases.
 
@@ -37,9 +37,12 @@ npm run test:e2e
 
 1. Create a feature branch and open a pull request against `main`.
 2. GitHub Actions runs the required `quality` status check on the pull request.
-3. Every push to a non-`main` branch is tested and deploys to the shared `skorovasscamping-beta` Worker. The latest successful branch deployment wins.
+3. Every push to a non-`main` branch is tested and deploys to the shared `skorovascamping-beta` Worker. The latest successful branch deployment wins.
 4. Review the shared beta site and merge only when all checks are green.
-5. A merge to `main` is tested again and deploys that commit to the `skorovasscamping` production Worker.
+5. A merge or push to `main` runs the quality checks but does not deploy.
+6. Deploy production manually from **Actions > Deploy Production > Run workflow**. Select `main` or another branch before starting the workflow.
+
+Beta can also be deployed manually from **Actions > Deploy Beta > Run workflow**, using the same branch selector. The manual workflow buttons are available after the workflow files have been merged into the default branch.
 
 Configure a GitHub branch rule for `main` with:
 
@@ -50,24 +53,26 @@ Configure a GitHub branch rule for `main` with:
 
 ## Cloudflare setup
 
-The deployment workflow needs these GitHub repository secrets:
+1. In Cloudflare, create an account API token from the **Edit Cloudflare Workers** template. Limit its account resources to the account that owns the site and its zone resources to `skorovascamping.no`.
+2. Copy the account ID from **Workers & Pages > Account Details**, or search for **Copy account ID** in the Cloudflare dashboard.
+3. Add these GitHub repository secrets under **Settings > Secrets and variables > Actions**:
 
 - `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID;
-- `CLOUDFLARE_API_TOKEN`: a scoped token with permission to edit Workers Scripts on that account.
+- `CLOUDFLARE_API_TOKEN`: the scoped token created above.
 
-The committed `wrangler.jsonc` defines separate production and beta Workers. Both have temporary `workers.dev` addresses until the custom domains can be attached.
+Do not commit either value. The committed `wrangler.jsonc` defines separate production and beta Workers and manages both custom domains. Cloudflare creates the required DNS records and TLS certificates during the first deployment, so do not create A or CNAME records for these hostnames manually.
 
-## Domain cutover
+## First deployment
 
-The `.no` domain must be bought from a Norid registrar before production can use it. Recheck availability immediately before purchase.
+The Cloudflare zone must be active before the first deployment. Its assigned nameservers are already authoritative for `skorovascamping.no`.
 
-1. Wait until `skorovasscamping.no` is active in Cloudflare after the nameserver change.
-2. Add `skorovasscamping.no` as the production Worker's custom domain.
-3. Add `beta.skorovasscamping.no` as the beta Worker's custom domain.
-4. Add `www.skorovasscamping.no` and create a permanent redirect to `https://skorovasscamping.no` while preserving path and query string.
-5. Verify HTTPS, the redirect, DNSSEC and the deployed production commit before announcing the site.
+1. Add the two GitHub secrets described above.
+2. Push a non-`main` branch to deploy `https://beta.skorovascamping.no` automatically.
+3. Verify HTTPS, the placeholder content, `noindex` metadata and `robots.txt` on beta.
+4. Merge the infrastructure pull request after beta is verified.
+5. Open **Actions > Deploy Production**, select the intended branch and run the workflow to deploy `https://skorovascamping.no`.
 
-While nameservers are propagating, use the two `workers.dev` addresses. The placeholder deliberately blocks indexing on both environments; beta must remain non-indexable when production content is opened for indexing.
+The placeholder deliberately blocks indexing on both environments. Beta must remain non-indexable when production content is opened for indexing later.
 
 The existing `.com` website remains untouched during this setup.
 
