@@ -1,12 +1,12 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/SeoHead.svelte';
+	import { getSeoRoute } from '$lib/seo';
 	import { siteName } from '$lib/site';
+
+	const seo = getSeoRoute('/');
 </script>
 
-<svelte:head>
-	<title>{siteName}</title>
-	<meta name="description" content="Ny nettside kommer." />
-	<meta name="robots" content="noindex, nofollow" />
-</svelte:head>
+<SeoHead route={seo} />
 
 <main>
 	<h1>{siteName}</h1>
@@ -14,20 +14,9 @@
 </main>
 
 <style>
-	:global(*) {
-		box-sizing: border-box;
-	}
-
-	:global(body) {
-		margin: 0;
-		font-family: system-ui, sans-serif;
-		color: #17231b;
-		background: #f4f6f2;
-	}
-
 	main {
 		display: grid;
-		min-height: 100vh;
+		min-height: calc(100vh - 4rem);
 		place-content: center;
 		padding: 2rem;
 		text-align: center;

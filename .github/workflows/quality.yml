@@ -18,6 +18,8 @@ jobs:
     name: quality
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      PUBLIC_DEPLOY_TARGET: beta
 
     steps:
       - name: Check out repository

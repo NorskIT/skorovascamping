@@ -24,6 +24,14 @@ jobs:
     environment:
       name: ${{ inputs.target }}
       url: ${{ inputs.target == 'beta' && 'https://beta.skorovascamping.no' || 'https://skorovascamping.no' }}
+    env:
+      PUBLIC_DEPLOY_TARGET: ${{ inputs.target }}
+      PUBLIC_GTM_CONTAINER_ID: ${{ vars.PUBLIC_GTM_CONTAINER_ID }}
+      PUBLIC_SITE_OPERATOR_NAME: ${{ vars.PUBLIC_SITE_OPERATOR_NAME }}
+      PUBLIC_SITE_OPERATOR_ORG_NUMBER: ${{ vars.PUBLIC_SITE_OPERATOR_ORG_NUMBER }}
+      PUBLIC_SITE_OPERATOR_ADDRESS: ${{ vars.PUBLIC_SITE_OPERATOR_ADDRESS }}
+      PUBLIC_PRIVACY_CONTACT_EMAIL: ${{ vars.PUBLIC_PRIVACY_CONTACT_EMAIL }}
+      PUBLIC_PRIVACY_CONTACT_PHONE: ${{ vars.PUBLIC_PRIVACY_CONTACT_PHONE }}
 
     steps:
       - name: Check out repository

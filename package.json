@@ -11,6 +11,8 @@
 		"dev": "vite dev",
 		"clean:cloudflare": "node -e \"import('node:fs').then(({ rmSync }) => rmSync('.svelte-kit/cloudflare', { recursive: true, force: true }))\"",
 		"build": "npm run clean:cloudflare && wrangler types --check && vite build",
+		"build:beta": "PUBLIC_DEPLOY_TARGET=beta npm run build",
+		"build:production": "PUBLIC_DEPLOY_TARGET=production npm run build",
 		"preview": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "npm run clean:cloudflare && wrangler types --check && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -21,8 +23,8 @@
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"gen": "npm run clean:cloudflare && wrangler types",
-		"deploy": "npm run build && wrangler deploy --env=\"\"",
-		"deploy:beta": "npm run build && wrangler deploy --env beta"
+		"deploy": "npm run build:production && wrangler deploy --env=\"\"",
+		"deploy:beta": "npm run build:beta && wrangler deploy --env beta"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -44,5 +46,8 @@
 		"vite": "^8.0.16",
 		"vitest": "^4.1.8",
 		"wrangler": "^4.97.0"
+	},
+	"dependencies": {
+		"vanilla-cookieconsent": "^3.1.0"
 	}
 }

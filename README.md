@@ -2,7 +2,7 @@
 
 Infrastructure for the new `skorovascamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
 
-The current page is deliberately a minimal, non-indexable placeholder. Content, translated routes, SEO metadata, contact forms and booking integrations belong to later phases.
+The current page is deliberately minimal. Production is indexable, while beta and local builds remain non-indexable. Content, translated routes, contact forms and booking integrations belong to later phases.
 
 ## Requirements
 
@@ -44,6 +44,8 @@ npm run test:e2e
 
 Beta can also be deployed manually from **Actions > Deploy Beta > Run workflow**, using the same branch selector. The manual workflow buttons are available after the workflow files have been merged into the default branch.
 
+The deployment workflow sets `PUBLIC_DEPLOY_TARGET` at build time. Production emits indexable metadata and crawler instructions; beta emits `noindex` metadata and an `X-Robots-Tag` header. Do not set this variable manually in GitHub.
+
 Configure a GitHub branch rule for `main` with:
 
 - pull requests required;
@@ -72,9 +74,24 @@ The Cloudflare zone must be active before the first deployment. Its assigned nam
 4. Merge the infrastructure pull request after beta is verified.
 5. Open **Actions > Deploy Production**, select the intended branch and run the workflow to deploy `https://skorovascamping.no`.
 
-The placeholder deliberately blocks indexing on both environments. Beta must remain non-indexable when production content is opened for indexing later.
+Production is indexable. Beta must remain non-indexable.
 
 The existing `.com` website remains untouched during this setup.
+
+## SEO and analytics
+
+All public pages are registered in `src/lib/seo.ts`. Adding, removing or renaming a page must update that registry in the same change; it is the source for canonical URLs and `sitemap.xml`. A unit test fails if a static page is missing from the registry. Additional rules are documented in `AGENTS.md`.
+
+Google Analytics is loaded through Google Tag Manager only on production and only after the public configuration is complete. Add these non-secret values as GitHub repository or environment variables:
+
+- `PUBLIC_GTM_CONTAINER_ID`
+- `PUBLIC_SITE_OPERATOR_NAME`
+- `PUBLIC_SITE_OPERATOR_ORG_NUMBER`
+- `PUBLIC_SITE_OPERATOR_ADDRESS`
+- `PUBLIC_PRIVACY_CONTACT_EMAIL`
+- `PUBLIC_PRIVACY_CONTACT_PHONE`
+
+See `.env.example` for local configuration. Missing operator values render as `XXXXX`; incomplete configuration prevents GTM from loading. Beta still renders the cookie-consent interface for review but never loads GTM.
 
 ## Rollback
 

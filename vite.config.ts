@@ -3,6 +3,7 @@ import adapter from '@sveltejs/adapter-cloudflare';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	envPrefix: ['VITE_', 'PUBLIC_'],
 	plugins: [
 		sveltekit({
 			compilerOptions: {
