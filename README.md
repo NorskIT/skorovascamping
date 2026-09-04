@@ -1,6 +1,6 @@
 # Skorovas Camping
 
-Infrastructure for the new `skorovasscamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
+Infrastructure for the new `skorovascamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
 
 The current page is deliberately a minimal, non-indexable placeholder. Content, translated routes, SEO metadata, contact forms and booking integrations belong to later phases.
 
@@ -16,6 +16,8 @@ npm ci
 npm run dev
 ```
 
+In Cursor or VS Code, open **Run and Debug**, select **SvelteKit: localhost**, and press `F5`. The committed debug profile starts the development server and opens `http://127.0.0.1:5173` with browser debugging enabled.
+
 ## Quality checks
 
 Run the same checks used by GitHub Actions:
@@ -29,51 +31,48 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`npm run preview` serves the production build through the Cloudflare Workers runtime. `npm run deploy` performs a direct production deployment for recovery or initial setup; normal deployments should come from Git.
+`npm run preview` serves the production build through the Cloudflare Workers runtime. `npm run deploy:beta` and `npm run deploy` perform direct beta and production deployments for recovery or initial setup; normal deployments come from GitHub Actions.
 
 ## Delivery workflow
 
 1. Create a feature branch and open a pull request against `main`.
-2. GitHub Actions runs the `quality` status check.
-3. Cloudflare Workers Builds creates an isolated `*.workers.dev` preview for the branch.
-4. Review the preview and merge only when all checks are green.
-5. A merge to `main` deploys that commit automatically to production.
+2. GitHub Actions runs the required `quality` status check on the pull request.
+3. Every push to a non-`main` branch is tested and deploys to the shared `skorovascamping-beta` Worker. The latest successful branch deployment wins.
+4. Review the shared beta site and merge only when all checks are green.
+5. A merge or push to `main` runs the quality checks but does not deploy.
+6. Deploy production manually from **Actions > Deploy Production > Run workflow**. Select `main` or another branch before starting the workflow.
+
+Beta can also be deployed manually from **Actions > Deploy Beta > Run workflow**, using the same branch selector. The manual workflow buttons are available after the workflow files have been merged into the default branch.
 
 Configure a GitHub branch rule for `main` with:
 
 - pull requests required;
 - the `quality` status check required;
-- the Cloudflare Workers Builds check required after its first run;
 - force pushes and branch deletion disabled;
 - zero required approving reviews, so a sole developer can merge after checks pass.
 
 ## Cloudflare setup
 
-Create or sign in to the Cloudflare account that will own the website, then import the public GitHub repository `NorskIT/skorovascamping` under **Workers & Pages**.
+1. In Cloudflare, create an account API token from the **Edit Cloudflare Workers** template. Limit its account resources to the account that owns the site and its zone resources to `skorovascamping.no`.
+2. Copy the account ID from **Workers & Pages > Account Details**, or search for **Copy account ID** in the Cloudflare dashboard.
+3. Add these GitHub repository secrets under **Settings > Secrets and variables > Actions**:
 
-Use these build settings:
+- `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID;
+- `CLOUDFLARE_API_TOKEN`: the scoped token created above.
 
-| Setting                   | Value                          |
-| ------------------------- | ------------------------------ |
-| Worker name               | `skorovasscamping`             |
-| Production branch         | `main`                         |
-| Build command             | `npm run build`                |
-| Production deploy command | `npx wrangler deploy`          |
-| Preview deploy command    | `npx wrangler versions upload` |
-| Build variable            | `NODE_VERSION=24.18.0`         |
+Do not commit either value. The committed `wrangler.jsonc` defines separate production and beta Workers and manages both custom domains. Cloudflare creates the required DNS records and TLS certificates during the first deployment, so do not create A or CNAME records for these hostnames manually.
 
-The committed `wrangler.jsonc` enables Workers preview URLs. Cloudflare creates and manages the deployment token for its native Git integration; do not add Cloudflare credentials to the repository.
+## First deployment
 
-## Domain cutover
+The Cloudflare zone must be active before the first deployment. Its assigned nameservers are already authoritative for `skorovascamping.no`.
 
-The `.no` domain must be bought from a Norid registrar before production can use it. Recheck availability immediately before purchase.
+1. Add the two GitHub secrets described above.
+2. Push a non-`main` branch to deploy `https://beta.skorovascamping.no` automatically.
+3. Verify HTTPS, the placeholder content, `noindex` metadata and `robots.txt` on beta.
+4. Merge the infrastructure pull request after beta is verified.
+5. Open **Actions > Deploy Production**, select the intended branch and run the workflow to deploy `https://skorovascamping.no`.
 
-1. Register `skorovasscamping.no` and enable automatic renewal.
-2. Add the domain as a zone on the website's Cloudflare account.
-3. Replace the registrar's nameservers with the two nameservers assigned by Cloudflare.
-4. Add `skorovasscamping.no` as the Worker's custom production domain.
-5. Add `www.skorovasscamping.no` in Cloudflare DNS and create a permanent redirect to `https://skorovasscamping.no` while preserving path and query string.
-6. Verify HTTPS, the redirect, DNSSEC and the production commit before announcing the site.
+The placeholder deliberately blocks indexing on both environments. Beta must remain non-indexable when production content is opened for indexing later.
 
 The existing `.com` website remains untouched during this setup.
 

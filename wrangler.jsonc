@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "skorovasscamping",
+	"name": "skorovascamping",
 	"compatibility_date": "2026-09-02",
 	"compatibility_flags": ["nodejs_als"],
 	"main": ".svelte-kit/cloudflare/_worker.js",
@@ -8,6 +8,25 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"workers_dev": true,
-	"preview_urls": true
+	"workers_dev": false,
+	"preview_urls": false,
+	"routes": [
+		{
+			"pattern": "skorovascamping.no",
+			"custom_domain": true
+		}
+	],
+	"env": {
+		"beta": {
+			"name": "skorovascamping-beta",
+			"workers_dev": false,
+			"preview_urls": false,
+			"routes": [
+				{
+					"pattern": "beta.skorovascamping.no",
+					"custom_domain": true
+				}
+			]
+		}
+	}
 }
