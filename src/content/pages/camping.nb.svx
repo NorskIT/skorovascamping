@@ -1,0 +1,26 @@
+---
+id: camping
+locale: nb
+kind: page
+status: review
+title: Camping i Skorovas | Bobil, campingvogn og telt
+description: Se oppstillingsplasser, priser og fasiliteter for bobil, campingvogn og telt hos Skorovas Camping i Namdalen.
+heading: Camping i Skorovas
+eyebrow: Bobil, campingvogn og telt
+heroImage: skorovas-camping-pitches
+heroAlt: Oppstillingsplasser ved Skorovas Camping
+updatedAt: 2026-09-05
+---
+
+## Oppstillingsplasser
+
+Sentralt i Skorovas ligger fire oppstillingsplasser med strøm. Tre ligger øst for Flerbrukshuset og butikken, mens den fjerde ligger ved vestveggen på Flerbrukshuset. Ved Lille Skorovatn finnes seks planerte oppstillingsplasser uten strøm. Her er det kort vei til butikken og Skjenkestova, og det er også mulig å telte.
+
+## Priser
+
+- Bobil eller campingvogn: **300 kroner per døgn**, inkludert strøm og tilgang til toalett.
+- Telt: **100 kroner per døgn**, inkludert tilgang til toalett.
+
+## Fasiliteter
+
+Det er tilgang til vann og toalett i Gruvekafeen innenfor butikken. Dusjen i Flerbrukshuset er for tiden ikke tilgjengelig. Miljøcontainere finnes ved campingen, og gratis tømmestasjon for gråvann og toalett ligger knapt én kilometer vest for plassen. Campingplassen drives av Skorovas Samvirkelag SA. For å bestille plass kan du ringe **48 12 91 15**, sende en forespørsel eller henvende deg i butikken i betjent åpningstid.

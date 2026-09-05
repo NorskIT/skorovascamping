@@ -1,0 +1,21 @@
+---
+id: home
+locale: de
+kind: page
+status: review
+title: Skorovas Camping | Camping im Namdalen
+description: Stellplätze für Wohnmobil und Wohnwagen sowie Zeltplätze zwischen Bergen, Seen und Wildnis in Skorovas.
+heading: Camping zwischen Bergen, Seen und Wildnis
+eyebrow: Willkommen in Skorovas
+heroImage: skorovas-village-from-above
+heroAlt: Blick über Skorovas zwischen Bergen und Seen
+updatedAt: 2026-09-05
+---
+
+## Ein kleiner Campingplatz im Bergdorf
+
+Skorovas, auch Skorovatn genannt, ist ein kleines Dorf im inneren Namdalen. Hier wohnen Sie nahe an Wanderwegen, Angelmöglichkeiten, lokaler Geschichte und einer lebendigen Dorfgemeinschaft. Der Campingplatz bietet Stellplätze für Wohnmobile und Wohnwagen. Am Lille Skorovatn kann auch gezeltet werden. Der Laden, das Gruvekafeen und die Skjenkestova liegen ganz in der Nähe.
+
+## Mehr als nur eine Übernachtung
+
+Skorovas entstand nach dem Zweiten Weltkrieg rund um den Bergbau. Das Bergwerk wurde 1984 geschlossen, doch Geschichte, Gebäude und Gemeinschaftsgeist leben weiter. Heute ist das Dorf ein ruhiger Ausgangspunkt für Erlebnisse zu jeder Jahreszeit.

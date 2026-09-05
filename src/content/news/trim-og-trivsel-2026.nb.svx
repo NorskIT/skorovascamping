@@ -1,0 +1,18 @@
+---
+id: trim-og-trivsel-2026-nb
+translationKey: trim-og-trivsel-2026
+locale: nb
+kind: news
+status: review
+slug: trim-og-trivsel-2026
+title: Trim og Trivsel 2026 i Skorovas
+description: Fra juni til oktober kan du besøke 26 Trim og Trivsel-poster i Skorovasområdet med Trimpoeng-appen.
+heading: Trim og Trivsel 2026
+eyebrow: Aktivitet
+heroImage: trim-og-trivsel
+heroAlt: Informasjon om Trim og Trivsel i Skorovas
+publishedAt: 2026-06-01
+updatedAt: 2026-09-05
+---
+
+Fra 1. juni og ut oktober finnes det 26 poster i Skorovasområdet som kan besøkes ved hjelp av Trimpoeng-appen. Deltakere registrerer postene i appen. Det blir premiering etter sesongen. Kontroller årets regler og lenke til konkurransen før publisering.

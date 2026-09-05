@@ -1,0 +1,25 @@
+---
+id: experiences
+locale: en
+kind: page
+status: review
+title: Experiences and activities in Skorovas
+description: Discover hiking, fishing, winter landscapes, mining history and local events around Skorovas in Namdalen.
+heading: Experiences in Skorovas
+eyebrow: Active throughout the year
+heroImage: skorovas-winter-landscape
+heroAlt: Winter landscape in the mountains around Skorovas
+updatedAt: 2026-09-05
+---
+
+## Mountains, lakes and wilderness
+
+Skorovas is surrounded by extensive terrain for outdoor activities throughout the year. Summer brings hiking, fishing and berry picking, while winter offers skiing and quiet days in a snow-covered landscape.
+
+## Trim og Trivsel
+
+From 1 June until the end of October, Trim og Trivsel offers 26 checkpoints in the Skorovas area. Visits are registered in the Trimpoeng app, with prizes available.
+
+## The Skorovasmarsjen walk
+
+On the first weekend of September, the local Red Cross arranges its annual walk from the Red Cross building. Several other events are usually held in the village during the same weekend. Something happens in Skorovas throughout the year. Confirmed dates are published in the news section and activity calendar.

@@ -1,0 +1,30 @@
+---
+id: practical
+locale: de
+kind: page
+status: review
+title: Praktische Informationen | Skorovas Camping
+description: Informationen zu Laden, Café, Toiletten, Wasser, Entsorgungsstation und weiteren Angeboten am Skorovas Camping.
+heading: Praktische Informationen
+eyebrow: Vor und während des Aufenthalts
+heroImage: skorovas-shop
+heroAlt: Skorovas Samvirkelag und Mehrzweckhaus
+updatedAt: 2026-09-05
+---
+
+## Laden und Gruvekafeen
+
+Skorovas Samvirkelag ist der örtliche Laden. Er ist täglich außer sonntags vier Stunden besetzt. Mit CoopKey können Kunden rund um die Uhr einkaufen. Angeboten werden Lebensmittel und weitere Waren. Das Gruvekafeen befindet sich im Mehrzweckhaus und wird von der Freiwilligenzentrale Skorovas Liv betrieben. Das Café funktioniert weitgehend in Selbstbedienung, auch außerhalb der bedienten Ladenzeiten; bezahlt wird mit Vipps.
+
+## Skjenkestova und Kapelle
+
+Die Skjenkestova befindet sich im Erdgeschoss der alten Schule. Die Kneipe ist für ihre große Auswahl an Bier und Aquavit bekannt und normalerweise am Wochenende sowie an ausgewählten anderen Tagen geöffnet. Die Kapelle von Skorovatn wurde 1965 nach Plänen des Architekten Asbjørn Aursand fertiggestellt. Noch heute finden dort Gottesdienste, kirchliche Feiern und gelegentlich Konzerte statt.
+
+## Auf dem Campingplatz
+
+- Wasser und Toiletten stehen im Gruvekafeen zur Verfügung.
+- Duschen sind derzeit nicht verfügbar.
+- Recyclingcontainer befinden sich am Campingplatz.
+- Eine kostenlose Entsorgungsstation liegt knapp einen Kilometer westlich.
+
+Aktuelle Öffnungszeiten und Veranstaltungen finden Sie unter Neuigkeiten oder auf den lokalen Facebook-Seiten.

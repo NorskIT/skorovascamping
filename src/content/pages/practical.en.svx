@@ -1,0 +1,30 @@
+---
+id: practical
+locale: en
+kind: page
+status: review
+title: Practical information | Skorovas Camping
+description: Information about the shop, café, toilets, water, disposal point and other facilities near Skorovas Camping.
+heading: Practical information
+eyebrow: Before and during your stay
+heroImage: skorovas-shop
+heroAlt: Skorovas Samvirkelag shop and community building
+updatedAt: 2026-09-05
+---
+
+## Shop and Gruvekafeen
+
+Skorovas Samvirkelag is the local shop. It is staffed for four hours each day except Sunday. CoopKey customers can log in and shop around the clock. Groceries and a selection of other goods are available. Gruvekafeen is inside the community building and run by the Skorovas Liv volunteer centre. The café is mainly self-service, including outside staffed shop hours, with payment by Vipps.
+
+## Skjenkestova and the chapel
+
+Skjenkestova is on the ground floor of the old school. The pub is known for its wide selection of beer and aquavit and is usually open at weekends and on selected other days. Skorovatn chapel was completed in 1965 and designed by architect Asbjørn Aursand. Services, ceremonies and occasional concerts are still held here.
+
+## At the campsite
+
+- Water and toilets are available at Gruvekafeen.
+- Showers are currently unavailable.
+- Recycling containers are located at the campsite.
+- A free disposal point is just under one kilometre west of the campsite.
+
+Check the news section or local Facebook pages for current opening times and events.

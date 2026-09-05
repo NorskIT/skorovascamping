@@ -1,0 +1,21 @@
+---
+id: skorovas
+locale: de
+kind: page
+status: review
+title: Das Bergbaudorf Skorovas | Geschichte und Gemeinschaft
+description: Lernen Sie Bergbaugeschichte, Dorfgemeinschaft und die besonderen Orte des lebendigen Bergdorfs Skorovas kennen.
+heading: Das Bergbaudorf Skorovas
+eyebrow: Historisch und lebendig
+heroImage: skorovatn-chapel
+heroAlt: Die Kapelle von Skorovatn in Skorovas
+updatedAt: 2026-09-05
+---
+
+## Rund um das Bergwerk entstanden
+
+Zwischen 1946 und 1984 entstanden in Skorovas alle Einrichtungen einer Bergbaugemeinde: Verwaltung, Werkstätten, Wohnhäuser, Laden, Schule, Kindergarten, Gemeinschaftshaus mit Schwimmbad und Kapelle. In der Blütezeit lebten hier etwa 650 Menschen. Nach der Schließung des Bergwerks 1984 wurden viele Häuser an Menschen verkauft, die ihre Zukunft in den Bergen sahen. Heute sind die meisten Ferienhäuser, doch Einwohner und Ferienhausbesitzer halten das Dorf lebendig.
+
+## Eine aktive Gemeinschaft
+
+Skorovas bietet einen rund um die Uhr zugänglichen Laden, das Gruvekafeen, die Skjenkestova, eine Kapelle, den Treffpunkt Høvel'n, Gebrauchtwarenläden und ein aktives Vereinsleben. Weitere Übernachtungsmöglichkeiten sind die DNT-Hütte Skorovashøtta, Zimmer im früheren Elkem-Messegebäude sowie private Hütten und Wohnungen über Airbnb und iNatur.

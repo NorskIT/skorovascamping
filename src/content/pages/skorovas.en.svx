@@ -1,0 +1,21 @@
+---
+id: skorovas
+locale: en
+kind: page
+status: review
+title: The mining village of Skorovas | History and community
+description: Discover the mining history, local community and places that make Skorovas a living mountain village.
+heading: The mining village of Skorovas
+eyebrow: A historic and living community
+heroImage: skorovatn-chapel
+heroAlt: Skorovatn chapel in Skorovas
+updatedAt: 2026-09-05
+---
+
+## Built around the mine
+
+Between 1946 and 1984, Skorovas developed all the facilities a mining community needed: administration buildings, workshops, homes, a shop, school, kindergarten, community hall with a swimming pool and a chapel. At its height, around 650 people lived here. When the mine closed in 1984, many homes were sold to people who wanted a future in the mountains. Most are now holiday homes, but permanent residents and cabin owners continue to keep the village alive.
+
+## An active community
+
+Skorovas has a round-the-clock shop, Gruvekafeen café, Skjenkestova pub, chapel, the Høvel'n meeting place, second-hand shops and active voluntary organisations. Other accommodation nearby includes the DNT Skorovashøtta cabin, rooms in the former Elkem mess building and privately owned cabins and apartments listed through Airbnb and iNatur.

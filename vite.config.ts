@@ -1,11 +1,17 @@
 import { defineConfig } from 'vitest/config';
+import { enhancedImages } from '@sveltejs/enhanced-img';
 import adapter from '@sveltejs/adapter-cloudflare';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { mdsvex } from 'mdsvex';
 
 export default defineConfig({
 	envPrefix: ['VITE_', 'PUBLIC_'],
 	plugins: [
+		enhancedImages(),
 		sveltekit({
+			extensions: ['.svelte', '.svx'],
+			preprocess: [vitePreprocess(), mdsvex({ extensions: ['.svx'] })],
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>

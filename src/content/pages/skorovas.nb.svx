@@ -1,0 +1,21 @@
+---
+id: skorovas
+locale: nb
+kind: page
+status: review
+title: Gruvelandsbyen Skorovas | Historie og lokalsamfunn
+description: Bli kjent med gruvehistorien, lokalsamfunnet og stedene som gjør Skorovas til ei levende fjellbygd.
+heading: Gruvelandsbyen Skorovas
+eyebrow: Et historisk og levende lokalsamfunn
+heroImage: skorovatn-chapel
+heroAlt: Skorovatn kapell i Skorovas
+updatedAt: 2026-09-05
+---
+
+## Bygd opp rundt gruva
+
+Fra 1946 til 1984 ble Skorovas bygd opp med fasilitetene et gruvesamfunn trengte: administrasjonsbygg, verksteder, boliger, butikk, skole, barnehage, samfunnshus med svømmehall og kapell. På det meste bodde omkring 650 mennesker her. Da gruva ble lagt ned i 1984, ble mange av husene solgt til mennesker som ønsket ei framtid i fjellheimen. I dag brukes de fleste som fritidshus, men fastboende og fritidshuseiere holder fortsatt liv i bygda.
+
+## Et aktivt samfunn
+
+Skorovas har døgnåpen butikk, Gruvekafeen, Skjenkestova, kapell, møtestedet Høvel'n, bruktbutikker og et rikt foreningsliv. Idrettslag, Røde Kors, jakt- og fiskelag, skytterlag og Skorovas Liv Frivilligsentral er viktige bidragsytere. Andre muligheter for overnatting i området omfatter DNT Skorovashøtta, rom i den tidligere Elkem-messa og private hytter og leiligheter via Airbnb og iNatur.

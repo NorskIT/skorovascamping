@@ -2,7 +2,7 @@
 
 Infrastructure for the new `skorovascamping.no` website. The application is built with SvelteKit and deployed to Cloudflare Workers.
 
-The current page is deliberately minimal. Production is indexable, while beta and local builds remain non-indexable. Content, translated routes, contact forms and booking integrations belong to later phases.
+The site contains a beta-ready content foundation in Norwegian, English and German. Production is indexable, while beta and local builds remain non-indexable. Imported content stays marked for review until it has been fact-checked.
 
 ## Requirements
 
@@ -92,6 +92,20 @@ Google Analytics is loaded through Google Tag Manager only on production and onl
 - `PUBLIC_PRIVACY_CONTACT_PHONE`
 
 See `.env.example` for local configuration. Missing operator values render as `XXXXX`; incomplete configuration prevents GTM from loading. Beta still renders the cookie-consent interface for review but never loads GTM.
+
+## Content and translations
+
+Landing pages live in `src/content/pages` and news articles in `src/content/news`. Frontmatter is validated during the build. Core content uses a shared page ID in `nb`, `en` and `de`; routes and language links are defined centrally in `src/lib/i18n.ts`.
+
+Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta with a warning, remains `noindex`, is excluded from the sitemap and blocks production builds. The verification checklist is in `docs/content-review.md`.
+
+## Contact form
+
+The form fails closed until all Cloudflare values are configured. Add `PUBLIC_BOOKING_PHONE`, `PUBLIC_BOOKING_EMAIL` and `PUBLIC_TURNSTILE_SITE_KEY` as GitHub variables for the rendered site.
+
+Create a Turnstile widget for both site hostnames. Add `TURNSTILE_SECRET_KEY`, `CONTACT_RECIPIENT_EMAIL` and `CONTACT_FROM_EMAIL` as encrypted Worker secrets in both Cloudflare environments. Configure a Cloudflare Email Service binding named `CONTACT_EMAIL`; the sender address must be permitted by the account. Rate limiting is already declared in `wrangler.jsonc`.
+
+The `www.skorovascamping.no` custom domain is attached to the production Worker and permanently redirects to the apex hostname while preserving the path and query string.
 
 ## Rollback
 

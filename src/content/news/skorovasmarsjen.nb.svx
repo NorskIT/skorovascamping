@@ -1,0 +1,18 @@
+---
+id: skorovasmarsjen-nb
+translationKey: skorovasmarsjen
+locale: nb
+kind: news
+status: review
+slug: skorovasmarsjen
+title: Skorovasmarsjen
+description: Røde Kors Skorovas arrangerer den tradisjonsrike Skorovasmarsjen den første helga i september.
+heading: Skorovasmarsjen
+eyebrow: Årlig arrangement
+heroImage: skorovasmarsjen
+heroAlt: Deltakere og informasjon fra Skorovasmarsjen
+publishedAt: 2026-09-01
+updatedAt: 2026-09-05
+---
+
+Den første helga i september arrangerer Røde Kors Skorovas en turmarsj med utgangspunkt fra Røde Kors-huset. Det pleier å være flere arrangementer i Skorovas den samme helga. Dato og program for neste marsj må bekreftes før publisering.

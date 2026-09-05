@@ -15,6 +15,9 @@ export interface PublicSiteEnvironment {
 	PUBLIC_SITE_OPERATOR_ADDRESS?: string;
 	PUBLIC_PRIVACY_CONTACT_EMAIL?: string;
 	PUBLIC_PRIVACY_CONTACT_PHONE?: string;
+	PUBLIC_BOOKING_PHONE?: string;
+	PUBLIC_BOOKING_EMAIL?: string;
+	PUBLIC_TURNSTILE_SITE_KEY?: string;
 }
 
 export interface SiteOperator {
@@ -32,6 +35,10 @@ export interface PublicSiteConfig {
 	operator: SiteOperator;
 	operatorIsComplete: boolean;
 	analyticsEnabled: boolean;
+	bookingPhone: string;
+	bookingEmail: string;
+	turnstileSiteKey: string;
+	contactFormEnabled: boolean;
 }
 
 const placeholder = 'XXXXX';
@@ -58,6 +65,9 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		operator.address !== placeholder &&
 		(operator.privacyEmail !== placeholder || operator.privacyPhone !== placeholder);
 	const isProduction = target === DeployTarget.Production;
+	const bookingPhone = valueOrPlaceholder(environment.PUBLIC_BOOKING_PHONE);
+	const bookingEmail = valueOrPlaceholder(environment.PUBLIC_BOOKING_EMAIL);
+	const turnstileSiteKey = environment.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? '';
 
 	return {
 		target,
@@ -65,6 +75,10 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		gtmContainerId,
 		operator,
 		operatorIsComplete,
+		bookingPhone,
+		bookingEmail,
+		turnstileSiteKey,
+		contactFormEnabled: Boolean(turnstileSiteKey && bookingEmail !== placeholder),
 		analyticsEnabled:
 			isProduction && operatorIsComplete && /^GTM-[A-Z0-9]+$/.test(gtmContainerId)
 	};

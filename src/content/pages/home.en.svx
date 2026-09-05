@@ -1,0 +1,21 @@
+---
+id: home
+locale: en
+kind: page
+status: review
+title: Skorovas Camping | Camping in Namdalen
+description: Motorhome, caravan and tent camping among mountains, lakes and wilderness in Skorovas, Namdalen.
+heading: Camping among mountains, lakes and wilderness
+eyebrow: Welcome to Skorovas
+heroImage: skorovas-village-from-above
+heroAlt: View across Skorovas surrounded by mountains and lakes
+updatedAt: 2026-09-05
+---
+
+## A small campsite in a mountain village
+
+Skorovas, also known as Skorovatn, is a small village in inner Namdalen. Stay close to mountain trails, fishing, local history and an active local community. The campsite has pitches for motorhomes and caravans, while tents are welcome by lake Lille Skorovatn. The local shop, Gruvekafeen café and Skjenkestova pub are all nearby.
+
+## More than somewhere to sleep
+
+Skorovas grew around the mining industry after the Second World War. The mine closed in 1984, but its history, buildings and community spirit live on. Today the village is a peaceful base for year-round experiences.

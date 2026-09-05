@@ -9,6 +9,9 @@ declare global {
 		readonly PUBLIC_SITE_OPERATOR_ADDRESS?: string;
 		readonly PUBLIC_PRIVACY_CONTACT_EMAIL?: string;
 		readonly PUBLIC_PRIVACY_CONTACT_PHONE?: string;
+		readonly PUBLIC_BOOKING_PHONE?: string;
+		readonly PUBLIC_BOOKING_EMAIL?: string;
+		readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
 	}
 
 	interface ImportMeta {
@@ -21,8 +24,25 @@ declare global {
 	}
 
 	namespace App {
+		interface ContactEmailBinding {
+			send(message: {
+				to: string;
+				from: string;
+				replyTo?: string;
+				subject: string;
+				text: string;
+				html?: string;
+			}): Promise<{ messageId: string }>;
+		}
+
 		interface Platform {
-			env: Env;
+			env: Env & {
+				CONTACT_EMAIL?: ContactEmailBinding;
+				TURNSTILE_SECRET_KEY?: string;
+				CONTACT_RECIPIENT_EMAIL?: string;
+				CONTACT_FROM_EMAIL?: string;
+				CONTACT_RATE_LIMITER?: RateLimit;
+			};
 			ctx: ExecutionContext;
 			caches: CacheStorage;
 			cf?: IncomingRequestCfProperties;

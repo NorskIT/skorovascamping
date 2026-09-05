@@ -1,0 +1,26 @@
+---
+id: camping
+locale: de
+kind: page
+status: review
+title: Camping in Skorovas | Wohnmobil, Wohnwagen und Zelt
+description: Stellplätze, Preise und Ausstattung für Wohnmobile, Wohnwagen und Zelte auf dem Skorovas Camping im Namdalen.
+heading: Camping in Skorovas
+eyebrow: Wohnmobil, Wohnwagen und Zelt
+heroImage: skorovas-camping-pitches
+heroAlt: Stellplätze auf dem Skorovas Camping
+updatedAt: 2026-09-05
+---
+
+## Stellplätze
+
+Im Zentrum von Skorovas gibt es vier Stellplätze mit Strom. Drei liegen östlich des Mehrzweckhauses und des Ladens, der vierte an der Westseite des Gebäudes. Am Lille Skorovatn stehen sechs ebene Stellplätze ohne Strom zur Verfügung. Laden und Skjenkestova sind schnell zu Fuß erreichbar; auch Zelte sind hier willkommen.
+
+## Preise
+
+- Wohnmobil oder Wohnwagen: **300 NOK pro Nacht**, einschließlich Strom und Toilettenzugang.
+- Zelt: **100 NOK pro Nacht**, einschließlich Toilettenzugang.
+
+## Ausstattung
+
+Wasser und Toiletten stehen im Gruvekafeen im Laden zur Verfügung. Die Dusche im Mehrzweckhaus ist derzeit nicht nutzbar. Recyclingcontainer befinden sich am Platz; eine kostenlose Entsorgungsstation für Grauwasser und Toiletten liegt knapp einen Kilometer westlich. Der Campingplatz wird von Skorovas Samvirkelag SA betrieben. Reservierungsanfragen sind telefonisch unter **+47 48 12 91 15**, über das Kontaktformular oder während der bedienten Ladenzeiten möglich.

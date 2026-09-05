@@ -1,0 +1,25 @@
+---
+id: experiences
+locale: de
+kind: page
+status: review
+title: Erlebnisse und Aktivitäten in Skorovas
+description: Wandern, Angeln, Winterlandschaft, Bergbaugeschichte und örtliche Veranstaltungen rund um Skorovas erleben.
+heading: Erlebnisse in Skorovas
+eyebrow: Das ganze Jahr aktiv
+heroImage: skorovas-winter-landscape
+heroAlt: Winterlandschaft in den Bergen rund um Skorovas
+updatedAt: 2026-09-05
+---
+
+## Berge, Seen und Wildnis
+
+Rund um Skorovas erstreckt sich ein großes Naturgebiet für Aktivitäten zu jeder Jahreszeit. Im Sommer locken Wandern, Angeln und Beerensammeln, im Winter Skitouren und ruhige Tage in verschneiter Landschaft.
+
+## Trim og Trivsel
+
+Vom 1. Juni bis Ende Oktober bietet Trim og Trivsel 26 Kontrollpunkte im Gebiet von Skorovas. Die Besuche werden in der Trimpoeng-App registriert; es gibt eine Prämierung.
+
+## Skorovasmarsjen
+
+Am ersten Septemberwochenende veranstaltet das örtliche Rote Kreuz seine jährliche Wanderung vom Rotkreuzhaus aus. Am selben Wochenende finden gewöhnlich weitere Veranstaltungen im Dorf statt. In Skorovas ist das ganze Jahr über etwas los. Bestätigte Termine erscheinen unter Neuigkeiten und im Veranstaltungskalender.

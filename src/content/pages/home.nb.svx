@@ -1,0 +1,21 @@
+---
+id: home
+locale: nb
+kind: page
+status: review
+title: Skorovas Camping | Camping i Namdalen
+description: Camping for bobil, campingvogn og telt mellom fjell, vatn og villmark i Skorovas i Namdalen.
+heading: Camping mellom fjell, vatn og villmark
+eyebrow: Velkommen til Skorovas
+heroImage: skorovas-village-from-above
+heroAlt: Utsikt over Skorovas mellom fjell og vatn
+updatedAt: 2026-09-05
+---
+
+## En liten campingplass midt i fjellbygda
+
+Skorovas, også kalt Skorovatn, er ei lita bygd i indre Namdal. Her bor du med kort vei til fjellturer, fiske, lokalhistorie og et aktivt lokalsamfunn. Campingplassen har oppstillingsplasser for bobil og campingvogn, og ved Lille Skorovatn er det også mulig å telte. Butikk, Gruvekafeen og Skjenkestova ligger like ved.
+
+## Mer enn et sted å overnatte
+
+Skorovas ble bygd opp rundt gruvedriften etter andre verdenskrig. Gruva stengte i 1984, men historien, husene og engasjementet lever videre. I dag er stedet et rolig utgangspunkt for opplevelser hele året.

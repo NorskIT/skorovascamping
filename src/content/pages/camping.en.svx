@@ -1,0 +1,26 @@
+---
+id: camping
+locale: en
+kind: page
+status: review
+title: Camping in Skorovas | Motorhomes, caravans and tents
+description: Pitches, prices and facilities for motorhomes, caravans and tents at Skorovas Camping in Namdalen.
+heading: Camping in Skorovas
+eyebrow: Motorhomes, caravans and tents
+heroImage: skorovas-camping-pitches
+heroAlt: Pitches at Skorovas Camping
+updatedAt: 2026-09-05
+---
+
+## Camping pitches
+
+Four pitches with electricity are located in central Skorovas. Three are east of the community building and shop, while the fourth is beside the building's western wall. Six level pitches without electricity are available by lake Lille Skorovatn. The shop and Skjenkestova pub are a short walk away, and tents are welcome here too.
+
+## Prices
+
+- Motorhome or caravan: **NOK 300 per night**, including electricity and toilet access.
+- Tent: **NOK 100 per night**, including toilet access.
+
+## Facilities
+
+Water and toilets are available at Gruvekafeen inside the shop. The shower in the community building is currently unavailable. Recycling containers are located at the campsite, and a free grey-water and toilet disposal point is just under one kilometre west of the site. Skorovas Samvirkelag SA operates the campsite. To request a pitch, call **+47 48 12 91 15**, send an enquiry or ask at the shop during staffed hours.

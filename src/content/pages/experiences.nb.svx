@@ -1,0 +1,25 @@
+---
+id: experiences
+locale: nb
+kind: page
+status: review
+title: Opplevelser og aktiviteter i Skorovas
+description: Opplev fjellturer, fiske, vinterlandskap, lokal historie og arrangementer rundt Skorovas i Namdalen.
+heading: Opplevelser i Skorovas
+eyebrow: Aktiv hele året
+heroImage: skorovas-winter-landscape
+heroAlt: Vinterlandskap i fjellene ved Skorovas
+updatedAt: 2026-09-05
+---
+
+## Fjell, vatn og villmark
+
+Rundt Skorovas finner du et stort turterreng som kan brukes hele året. Om sommeren inviterer fjellene til fotturer, fiske og bærplukking. Vinteren gir muligheter for ski og rolige dager i snødekt landskap.
+
+## Trim og Trivsel
+
+Fra 1. juni til ut oktober arrangeres Trim og Trivsel med 26 poster i Skorovasområdet. Postene registreres i Trimpoeng-appen, og det er premiering.
+
+## Skorovasmarsjen
+
+Første helga i september arrangerer Røde Kors Skorovas en årlig turmarsj med utgangspunkt fra Røde Kors-huset. Samme helg pleier det å være flere arrangementer i bygda. Det skjer noe i Skorovas gjennom hele året. Aktuelle datoer publiseres under nyheter og i aktivitetskalenderen.

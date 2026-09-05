@@ -1,0 +1,30 @@
+---
+id: practical
+locale: nb
+kind: page
+status: review
+title: Praktisk informasjon | Skorovas Camping
+description: Finn informasjon om butikk, mat, toalett, vann, tømmestasjon og andre tilbud ved Skorovas Camping.
+heading: Praktisk informasjon
+eyebrow: Før og under oppholdet
+heroImage: skorovas-shop
+heroAlt: Skorovas Samvirkelag og Flerbrukshuset
+updatedAt: 2026-09-05
+---
+
+## Butikk og Gruvekafeen
+
+Skorovas Samvirkelag er den lokale butikken. Den er betjent fire timer hver dag unntatt søndag. Med CoopKey kan kunder logge seg inn og handle hele døgnet. Butikken fører matvarer og et utvalg andre varer. Gruvekafeen ligger i Flerbrukshuset og drives av Skorovas Liv Frivilligsentral. Kafeen er stort sett selvbetjent, også utenom butikkens åpningstid, og betaling skjer med Vipps.
+
+## Skjenkestova og kapellet
+
+Skjenkestova ligger i første etasje i den gamle skolen. Puben er kjent for et stort utvalg øl og akevitt og holder vanligvis åpent i helgene, i tillegg til enkelte andre dager. Skorovatn kapell stod ferdig i 1965 og ble tegnet av arkitekt Asbjørn Aursand. Det holdes fortsatt gudstjenester, kirkelige handlinger og enkelte konserter her.
+
+## På campingplassen
+
+- Vann og toalett finnes i Gruvekafeen.
+- Dusj er for tiden ikke tilgjengelig.
+- Miljøcontainere står ved campingen.
+- Gratis tømmestasjon ligger knapt én kilometer vest for campingplassen.
+
+Sjekk nyhetene eller lokale Facebook-sider for oppdaterte åpningstider og arrangementer.

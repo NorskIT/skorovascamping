@@ -5,6 +5,9 @@
 - Every public route that is added, removed, or renamed must update the central SEO route registry in the same change.
 - Every indexable page must have a unique title, description, and canonical URL.
 - Dynamic public routes must enumerate their published entries for the sitemap. Never include beta, admin, draft, private, or internal URLs.
+- Add or update the sitemap registry in the same change whenever a public landing page or news route is created, removed, renamed or published.
+- Norwegian is the default language. Core pages must ship together in Norwegian, English and German with self-referencing canonicals and reciprocal `hreflang` links. News may be published in selected languages.
+- Imported or time-sensitive content must remain `status: review` until a human has fact-checked it on beta. Production builds must fail rather than publish review content.
 - Production pages are indexable unless the route is explicitly marked otherwise. Beta and local builds must always remain `noindex`.
 - Keep `robots.txt`, `sitemap.xml`, canonical URLs, and the route registry consistent. Tests that enforce this invariant must not be bypassed.
 

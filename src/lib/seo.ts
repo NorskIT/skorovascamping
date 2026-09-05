@@ -1,51 +1,139 @@
-import { productionOrigin } from '$lib/site';
+import { contentDocuments, newsDocuments, type ContentStatus } from '$lib/content';
+import { locales, localizedPath, type Locale, type PageId } from '$lib/i18n';
+import { productionOrigin, siteName } from '$lib/site';
 
-export interface SeoRoute {
-	path: `/${string}` | '/';
+export interface SeoDocument {
+	path: string;
+	locale: Locale;
+	translationKey: string;
 	title: string;
 	description: string;
-	changeFrequency: 'weekly' | 'monthly' | 'yearly';
-	priority: number;
+	updatedAt: string;
 	indexable: boolean;
+	status: ContentStatus;
+	type: 'website' | 'article';
+	image?: string;
 }
 
-export const seoRoutes = [
-	{
-		path: '/',
-		title: 'Skorovas Camping',
-		description: 'Camping og oppstillingsplasser i Skorovas.',
-		changeFrequency: 'weekly',
-		priority: 1,
-		indexable: true
+const specialCopy: Record<
+	Extract<PageId, 'news' | 'contact' | 'privacy' | 'cookies'>,
+	Record<Locale, { title: string; description: string }>
+> = {
+	news: {
+		nb: {
+			title: `Nyheter | ${siteName}`,
+			description: 'Nyheter og arrangementer fra Skorovas.'
+		},
+		en: { title: `News | ${siteName}`, description: 'News and events from Skorovas.' },
+		de: {
+			title: `Neuigkeiten | ${siteName}`,
+			description: 'Neuigkeiten und Veranstaltungen aus Skorovas.'
+		}
 	},
-	{
-		path: '/personvern',
-		title: 'Personvern | Skorovas Camping',
-		description: 'Informasjon om hvordan Skorovas Camping behandler personopplysninger.',
-		changeFrequency: 'yearly',
-		priority: 0.2,
-		indexable: true
+	contact: {
+		nb: {
+			title: `Kontakt og bestilling | ${siteName}`,
+			description: 'Kontakt Skorovas Camping for å bestille plass eller stille spørsmål.'
+		},
+		en: {
+			title: `Contact and booking | ${siteName}`,
+			description: 'Contact Skorovas Camping to request a pitch or ask a question.'
+		},
+		de: {
+			title: `Kontakt und Buchung | ${siteName}`,
+			description:
+				'Kontaktieren Sie Skorovas Camping für eine Stellplatzanfrage oder bei Fragen.'
+		}
 	},
-	{
-		path: '/informasjonskapsler',
-		title: 'Informasjonskapsler | Skorovas Camping',
-		description: 'Informasjon om informasjonskapsler og analyse på Skorovas Camping.',
-		changeFrequency: 'yearly',
-		priority: 0.2,
-		indexable: true
+	privacy: {
+		nb: {
+			title: `Personvern | ${siteName}`,
+			description: `Informasjon om hvordan ${siteName} behandler personopplysninger.`
+		},
+		en: {
+			title: `Privacy | ${siteName}`,
+			description: `How ${siteName} processes personal information.`
+		},
+		de: {
+			title: `Datenschutz | ${siteName}`,
+			description: `Informationen zur Verarbeitung personenbezogener Daten durch ${siteName}.`
+		}
+	},
+	cookies: {
+		nb: {
+			title: `Informasjonskapsler | ${siteName}`,
+			description: `Informasjon om informasjonskapsler og analyse på ${siteName}.`
+		},
+		en: {
+			title: `Cookies | ${siteName}`,
+			description: `Information about cookies and analytics on ${siteName}.`
+		},
+		de: {
+			title: `Cookies | ${siteName}`,
+			description: `Informationen zu Cookies und Analyse auf ${siteName}.`
+		}
 	}
-] as const satisfies readonly SeoRoute[];
+};
 
-export type SeoPath = (typeof seoRoutes)[number]['path'];
+const specialDocuments: SeoDocument[] = (
+	['news', 'contact', 'privacy', 'cookies'] as const
+).flatMap((id) =>
+	locales.map((locale) => ({
+		path: localizedPath(id, locale),
+		locale,
+		translationKey: id,
+		...specialCopy[id][locale],
+		updatedAt: '2026-09-05',
+		indexable: true,
+		status: 'published' as const,
+		type: 'website' as const
+	}))
+);
 
-export function getSeoRoute(path: SeoPath): SeoRoute {
-	const route = seoRoutes.find((candidate) => candidate.path === path);
-	if (!route) throw new Error(`Missing SEO configuration for ${path}`);
-	return route;
+export const seoDocuments: readonly SeoDocument[] = [
+	...contentDocuments.map((document) => ({
+		path: document.path,
+		locale: document.locale,
+		translationKey: document.id,
+		title: document.title,
+		description: document.description,
+		updatedAt: document.updatedAt,
+		indexable: document.status === 'published',
+		status: document.status,
+		type: 'website' as const,
+		image: document.heroImage
+	})),
+	...newsDocuments.map((document) => ({
+		path: document.path,
+		locale: document.locale,
+		translationKey: document.translationKey,
+		title: document.title,
+		description: document.description,
+		updatedAt: document.updatedAt,
+		indexable: document.status === 'published',
+		status: document.status,
+		type: 'article' as const,
+		image: document.heroImage
+	})),
+	...specialDocuments
+];
+
+export function getSeoDocument(path: string): SeoDocument {
+	const normalized = path !== '/' && path.endsWith('/') ? path.slice(0, -1) : path;
+	const document = seoDocuments.find((candidate) => candidate.path === normalized);
+	if (!document) throw new Error(`Missing SEO configuration for ${path}`);
+	return document;
 }
 
 export function canonicalUrl(path: string): string {
 	return new URL(path, productionOrigin).toString();
+}
+
+export function alternateDocuments(document: SeoDocument): readonly SeoDocument[] {
+	return seoDocuments.filter(
+		(candidate) =>
+			candidate.translationKey === document.translationKey && candidate.status === 'published'
+	);
 }
 
 const escapeXml = (value: string) =>
@@ -56,13 +144,12 @@ const escapeXml = (value: string) =>
 		.replaceAll('"', '&quot;');
 
 export function createSitemapXml(): string {
-	const urls = seoRoutes
-		.filter((route) => route.indexable)
+	const urls = seoDocuments
+		.filter((document) => document.indexable && document.status === 'published')
 		.map(
-			(route) => `  <url>
-    <loc>${escapeXml(canonicalUrl(route.path))}</loc>
-    <changefreq>${route.changeFrequency}</changefreq>
-    <priority>${route.priority.toFixed(1)}</priority>
+			(document) => `  <url>
+    <loc>${escapeXml(canonicalUrl(document.path))}</loc>
+    <lastmod>${document.updatedAt}</lastmod>
   </url>`
 		)
 		.join('\n');

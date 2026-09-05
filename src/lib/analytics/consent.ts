@@ -4,6 +4,7 @@ import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import { siteConfig } from '$lib/site';
 
 const analyticsCategory = 'analytics';
+const externalMediaCategory = 'external-media';
 const consentCookieName = 'skorovas_cookie_consent';
 const tagManagerScriptId = 'google-tag-manager';
 
@@ -39,6 +40,11 @@ function updateGoogleConsent(): void {
 	});
 }
 
+function handleConsentChange(): void {
+	updateGoogleConsent();
+	window.dispatchEvent(new Event('skorovas:consent-change'));
+}
+
 function loadGoogleTagManager(): void {
 	if (!siteConfig.analyticsEnabled || document.getElementById(tagManagerScriptId)) return;
 
@@ -52,7 +58,7 @@ function loadGoogleTagManager(): void {
 
 const consentConfig: CookieConsent.CookieConsentConfig = {
 	mode: 'opt-in',
-	revision: 1,
+	revision: 2,
 	autoClearCookies: true,
 	disablePageInteraction: true,
 	cookie: {
@@ -70,10 +76,11 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 			autoClear: {
 				cookies: [{ name: /^_ga/ }, { name: '_gid' }]
 			}
-		}
+		},
+		[externalMediaCategory]: {}
 	},
-	onConsent: updateGoogleConsent,
-	onChange: updateGoogleConsent,
+	onConsent: handleConsentChange,
+	onChange: handleConsentChange,
 	guiOptions: {
 		consentModal: {
 			layout: 'box inline',
@@ -87,6 +94,7 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 	},
 	language: {
 		default: 'nb',
+		autoDetect: 'document',
 		translations: {
 			nb: {
 				consentModal: {
@@ -149,6 +157,92 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 									}
 								]
 							}
+						},
+						{
+							title: 'Eksternt innhold',
+							description:
+								'Lar oss vise Google Calendar. Kalenderen lastes ikke før du godtar denne kategorien.',
+							linkedCategory: externalMediaCategory
+						}
+					]
+				}
+			},
+			en: {
+				consentModal: {
+					title: 'Cookie choices',
+					description:
+						'We use optional cookies for analytics and external content. You can change your choices at any time.',
+					acceptAllBtn: 'Accept all',
+					acceptNecessaryBtn: 'Reject optional',
+					showPreferencesBtn: 'Customise',
+					footer: '<a href="/en/cookies">About cookies</a><a href="/en/privacy">Privacy</a>'
+				},
+				preferencesModal: {
+					title: 'Cookie settings',
+					acceptAllBtn: 'Accept all',
+					acceptNecessaryBtn: 'Reject optional',
+					savePreferencesBtn: 'Save choices',
+					closeIconLabel: 'Close',
+					sections: [
+						{
+							title: 'Your choices',
+							description:
+								'Necessary cookies remember your choice. Other categories are optional.'
+						},
+						{
+							title: 'Necessary cookies',
+							description: 'Used to remember your cookie choices and protect forms.',
+							linkedCategory: 'necessary'
+						},
+						{
+							title: 'Analytics',
+							description: 'Google Analytics helps us improve the website.',
+							linkedCategory: analyticsCategory
+						},
+						{
+							title: 'External content',
+							description: 'Allows Google Calendar to load.',
+							linkedCategory: externalMediaCategory
+						}
+					]
+				}
+			},
+			de: {
+				consentModal: {
+					title: 'Cookie-Auswahl',
+					description:
+						'Wir verwenden optionale Cookies für Analyse und externe Inhalte. Sie können Ihre Auswahl jederzeit ändern.',
+					acceptAllBtn: 'Alle akzeptieren',
+					acceptNecessaryBtn: 'Optionale ablehnen',
+					showPreferencesBtn: 'Anpassen',
+					footer: '<a href="/de/cookies">Über Cookies</a><a href="/de/datenschutz">Datenschutz</a>'
+				},
+				preferencesModal: {
+					title: 'Cookie-Einstellungen',
+					acceptAllBtn: 'Alle akzeptieren',
+					acceptNecessaryBtn: 'Optionale ablehnen',
+					savePreferencesBtn: 'Auswahl speichern',
+					closeIconLabel: 'Schließen',
+					sections: [
+						{
+							title: 'Ihre Auswahl',
+							description:
+								'Notwendige Cookies speichern Ihre Auswahl. Andere Kategorien sind optional.'
+						},
+						{
+							title: 'Notwendige Cookies',
+							description: 'Speichern die Cookie-Auswahl und schützen Formulare.',
+							linkedCategory: 'necessary'
+						},
+						{
+							title: 'Analyse',
+							description: 'Google Analytics hilft uns, die Website zu verbessern.',
+							linkedCategory: analyticsCategory
+						},
+						{
+							title: 'Externe Inhalte',
+							description: 'Erlaubt das Laden von Google Calendar.',
+							linkedCategory: externalMediaCategory
 						}
 					]
 				}
@@ -161,7 +255,7 @@ export async function initializeConsentAndAnalytics(): Promise<void> {
 	setDefaultGoogleConsent();
 	loadGoogleTagManager();
 	await CookieConsent.run(consentConfig);
-	updateGoogleConsent();
+	handleConsentChange();
 }
 
 export function showCookiePreferences(): void {
@@ -170,4 +264,8 @@ export function showCookiePreferences(): void {
 
 export function isAnalyticsActive(): boolean {
 	return siteConfig.analyticsEnabled;
+}
+
+export function isExternalMediaAccepted(): boolean {
+	return CookieConsent.acceptedCategory(externalMediaCategory);
 }

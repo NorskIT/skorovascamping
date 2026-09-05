@@ -14,6 +14,15 @@ describe('site configuration', () => {
 		expect(config.isProduction).toBe(false);
 		expect(config.analyticsEnabled).toBe(false);
 		expect(config.operator.name).toBe('XXXXX');
+		expect(config.contactFormEnabled).toBe(false);
+	});
+
+	it('enables the contact form only with public booking details and Turnstile', () => {
+		const config = createPublicSiteConfig({
+			PUBLIC_BOOKING_EMAIL: 'booking@example.no',
+			PUBLIC_TURNSTILE_SITE_KEY: 'site-key'
+		});
+		expect(config.contactFormEnabled).toBe(true);
 	});
 
 	it('only enables analytics for a completely configured production build', () => {
