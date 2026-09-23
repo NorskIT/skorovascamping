@@ -173,10 +173,15 @@
 		background: white;
 		text-decoration: none;
 	}
+	.news-card :global(picture) {
+		display: block;
+		width: 100%;
+		height: clamp(12rem, 24vw, 16rem);
+	}
 	.news-card :global(img) {
 		display: block;
 		width: 100%;
-		aspect-ratio: 16/10;
+		height: 100%;
 		object-fit: cover;
 	}
 	.news-card div {
