@@ -78,24 +78,49 @@ const modules = import.meta.glob<ContentModule>('/src/content/pages/*.{svx,svelt
 	eager: true
 });
 const newsModules = import.meta.glob<ContentModule>('/src/content/news/*.svx', { eager: true });
-
-export const contentDocuments: readonly ContentDocument[] = Object.values(modules).map((module) => {
-	const metadata = pageMetadataSchema.parse(module.metadata);
-	return {
-		...metadata,
-		path: localizedPath(metadata.id, metadata.locale),
-		component: module.default
-	};
+const pageSources = import.meta.glob<string>('/src/content/pages/*.{svx,svelte}', {
+	eager: true,
+	query: '?raw',
+	import: 'default'
+});
+const newsSources = import.meta.glob<string>('/src/content/news/*.svx', {
+	eager: true,
+	query: '?raw',
+	import: 'default'
 });
 
-export const newsDocuments: readonly NewsDocument[] = Object.values(newsModules).map((module) => {
-	const metadata = newsMetadataSchema.parse(module.metadata);
-	return {
-		...metadata,
-		path: `${localizedPath('news', metadata.locale)}/${metadata.slug}`,
-		component: module.default
-	};
-});
+export function assertPublishableSource(
+	path: string,
+	status: ContentStatus,
+	source: string | undefined
+) {
+	if (status === 'published' && (!source || /\bX{3,5}\b/.test(source)))
+		throw new Error(`Published content still has unverified placeholders: ${path}`);
+}
+
+export const contentDocuments: readonly ContentDocument[] = Object.entries(modules).map(
+	([path, module]) => {
+		const metadata = pageMetadataSchema.parse(module.metadata);
+		assertPublishableSource(path, metadata.status, pageSources[path]);
+		return {
+			...metadata,
+			path: localizedPath(metadata.id, metadata.locale),
+			component: module.default
+		};
+	}
+);
+
+export const newsDocuments: readonly NewsDocument[] = Object.entries(newsModules).map(
+	([path, module]) => {
+		const metadata = newsMetadataSchema.parse(module.metadata);
+		assertPublishableSource(path, metadata.status, newsSources[path]);
+		return {
+			...metadata,
+			path: `${localizedPath('news', metadata.locale)}/${metadata.slug}`,
+			component: module.default
+		};
+	}
+);
 
 export function getContentDocument(id: PageId, locale: Locale): ContentDocument | undefined {
 	return contentDocuments.find((document) => document.id === id && document.locale === locale);
