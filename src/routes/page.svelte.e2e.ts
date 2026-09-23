@@ -44,8 +44,19 @@ test('serves crawler instructions and a sitemap without review content', async (
 test('shows review news on beta and keeps external calendar blocked before consent', async ({
 	page
 }) => {
-	await page.goto('/nyheter');
-	await expect(page.getByRole('link', { name: /Skorovasmarsjen/ })).toBeVisible();
+	for (const path of ['/nyheter', '/en/news', '/de/neuigkeiten']) {
+		await page.goto(path);
+		await expect(page.locator('.news-card')).toHaveCount(2);
+		await expect(page.getByRole('link', { name: /Skorovasmarsjen/ })).toBeVisible();
+	}
+	await page.goto('/en/news/skorovasmarsjen');
+	await page.getByRole('link', { name: 'Deutsch' }).click();
+	await expect(page).toHaveURL(/\/de\/neuigkeiten\/skorovasmarsjen$/);
+	await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+		'href',
+		'https://skorovascamping.no/de/neuigkeiten/skorovasmarsjen'
+	);
 	await page.goto('/opplevelser');
 	await expect(page.locator('iframe[title="Aktivitetskalender"]')).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Åpne cookie-innstillinger' })).toBeVisible();

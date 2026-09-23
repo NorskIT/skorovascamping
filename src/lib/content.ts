@@ -77,13 +77,15 @@ interface ContentModule {
 const modules = import.meta.glob<ContentModule>('/src/content/pages/*.{svx,svelte}', {
 	eager: true
 });
-const newsModules = import.meta.glob<ContentModule>('/src/content/news/*.svx', { eager: true });
+const newsModules = import.meta.glob<ContentModule>('/src/content/news/*.{svx,svelte}', {
+	eager: true
+});
 const pageSources = import.meta.glob<string>('/src/content/pages/*.{svx,svelte}', {
 	eager: true,
 	query: '?raw',
 	import: 'default'
 });
-const newsSources = import.meta.glob<string>('/src/content/news/*.svx', {
+const newsSources = import.meta.glob<string>('/src/content/news/*.{svx,svelte}', {
 	eager: true,
 	query: '?raw',
 	import: 'default'

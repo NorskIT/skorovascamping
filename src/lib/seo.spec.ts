@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { contentDocuments } from './content';
+import { contentDocuments, newsDocuments } from './content';
 import { locales, localizedRoutes } from './i18n';
 import {
 	alternateDocuments,
@@ -58,5 +58,27 @@ describe('SEO configuration', () => {
 		expect(new Set(paths.map((path) => getSeoDocument(path).title)).size).toBe(3);
 		expect(new Set(paths.map((path) => getSeoDocument(path).description)).size).toBe(3);
 		expect(() => getSeoDocument('/en/bilder')).toThrow('Missing SEO configuration');
+	});
+
+	it('registers the existing news articles in every language without publishing review content', () => {
+		for (const key of ['skorovasmarsjen', 'trim-og-trivsel-2026']) {
+			const translations = newsDocuments.filter(
+				(document) => document.translationKey === key
+			);
+			expect(translations.map((document) => document.locale).sort()).toEqual(
+				[...locales].sort()
+			);
+			for (const document of translations) {
+				const seo = getSeoDocument(document.path);
+				expect(seo.status).toBe('review');
+				expect(seo.indexable).toBe(false);
+				expect(alternateDocuments(seo).map((alternate) => alternate.path)).toEqual(
+					expect.arrayContaining(translations.map((translation) => translation.path))
+				);
+				expect(createSitemapXml()).not.toContain(
+					`<loc>${canonicalUrl(document.path)}</loc>`
+				);
+			}
+		}
 	});
 });

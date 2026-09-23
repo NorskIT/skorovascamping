@@ -10,6 +10,7 @@
 	import englishFlag from 'flag-icons/flags/4x3/gb.svg?url';
 	import germanFlag from 'flag-icons/flags/4x3/de.svg?url';
 	import favicon from '$lib/assets/favicon.svg';
+	import { getNewsDocumentByPath, newsDocuments } from '$lib/content';
 	import { getMessages, localizedPath, routeFromPath, type Locale } from '$lib/i18n';
 	import { siteConfig, siteName } from '$lib/site';
 
@@ -25,6 +26,7 @@
 	);
 	const text = $derived(getMessages(locale));
 	const currentRoute = $derived(routeFromPath(page.url.pathname));
+	const currentNews = $derived(getNewsDocumentByPath(page.url.pathname));
 	const overHero = $derived(
 		['home', 'camping', 'experiences', 'skorovas', 'practical'].includes(currentRoute?.id ?? '')
 	);
@@ -41,10 +43,13 @@
 			locale: language,
 			label: getMessages(language).languageName,
 			flag: { nb: norwegianFlag, en: englishFlag, de: germanFlag }[language],
-			path: localizedPath(
-				currentRoute?.id ?? (page.url.pathname.includes('/nyheter/') ? 'news' : 'home'),
-				language
-			)
+			path: currentNews
+				? (newsDocuments.find(
+						(document) =>
+							document.translationKey === currentNews.translationKey &&
+							document.locale === language
+					)?.path ?? localizedPath('news', language))
+				: localizedPath(currentRoute?.id ?? 'home', language)
 		}))
 	);
 
@@ -85,7 +90,7 @@
 				onclick={() => (menuOpen = !menuOpen)}
 				>{menuOpen ? text.closeMenu : text.menu}</button
 			>
-			<nav id="main-nav" class:open={menuOpen} aria-label="Main navigation">
+			<nav id="main-nav" class:open={menuOpen} aria-label={text.mainNavigation}>
 				{#each navigation as [id, label] (id)}<a
 						href={resolve('/[...path]', { path: localizedPath(id, locale).slice(1) })}
 						onclick={() => (menuOpen = false)}>{label}</a
@@ -99,7 +104,7 @@
 						trackBooking();
 					}}>{text.book}</a
 				>
-				<div class="languages" aria-label="Language">
+				<div class="languages" aria-label={text.languageSelection}>
 					{#each languageLinks as language (language.locale)}<a
 							class:active={language.locale === locale}
 							aria-label={language.label}
@@ -123,7 +128,7 @@
 				<strong>{siteName}</strong>
 				<p>{text.tagline}</p>
 			</div>
-			<nav aria-label="Legal information">
+			<nav aria-label={text.legalInformation}>
 				<a href={resolve('/[...path]', { path: localizedPath('contact', locale).slice(1) })}
 					>{text.contactHeading}</a
 				>

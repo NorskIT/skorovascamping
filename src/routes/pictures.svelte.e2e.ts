@@ -5,7 +5,7 @@ test('mobile menu closes for navigation, the current page, and language changes'
 }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/');
-	const nav = page.getByRole('navigation', { name: 'Main navigation' });
+	const nav = page.locator('#main-nav');
 	await page.getByRole('button', { name: 'Meny', exact: true }).click();
 	await nav.getByRole('link', { name: 'Bilder', exact: true }).click();
 	await expect(page).toHaveURL(/\/bilder$/);
@@ -59,14 +59,50 @@ test('picture pages contain all photos, translated SEO and an accessible full-im
 		const opener = page.locator('main .photo-grid button').first();
 		await opener.click();
 		await expect(page.getByRole('dialog')).toBeVisible();
-		await expect(page.getByRole('dialog').locator('img')).toHaveAttribute(
+		await expect(page.getByRole('dialog').locator('.stage img')).toHaveAttribute(
 			'alt',
 			(await opener.locator('img').getAttribute('alt')) ?? ''
 		);
+		await expect(page.getByRole('dialog').locator('.thumbnail')).toHaveCount(20);
 		await page.keyboard.press('Escape');
 		await expect(page.getByRole('dialog')).toBeHidden();
 		await expect(opener).toBeFocused();
 	}
+});
+
+test('gallery browses in order with controls, thumbnails and arrow keys', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/bilder');
+	const opener = page.locator('main .photo-grid button').first();
+	await opener.click();
+	const dialog = page.getByRole('dialog');
+	const photo = dialog.locator('.stage img');
+	await expect(photo).toHaveAttribute('alt', 'Campingliv ved vatnet');
+	await dialog.getByRole('button', { name: 'Neste bilde' }).click();
+	await expect(photo).toHaveAttribute('alt', 'Bobiler mellom bjørketrærne');
+	await expect(dialog.locator('.thumbnail[aria-pressed="true"]')).toHaveAttribute(
+		'aria-label',
+		'2: Bobiler mellom bjørketrærne'
+	);
+	await page.keyboard.press('ArrowLeft');
+	await expect(photo).toHaveAttribute('alt', 'Campingliv ved vatnet');
+	await page.keyboard.press('ArrowLeft');
+	await expect(photo).toHaveAttribute(
+		'alt',
+		(await page.locator('main .photo-grid button').last().locator('img').getAttribute('alt')) ??
+			''
+	);
+	await expect(dialog.locator('.thumbnail[aria-pressed="true"]')).toHaveAttribute(
+		'aria-label',
+		/20:/
+	);
+	await dialog.getByRole('button', { name: '3: Sitteplass ved skogkanten' }).click();
+	await expect(photo).toHaveAttribute('alt', 'Sitteplass ved skogkanten');
+	await dialog.getByRole('button', { name: 'Forrige bilde' }).click();
+	await expect(photo).toHaveAttribute('alt', 'Bobiler mellom bjørketrærne');
+	await dialog.getByRole('button', { name: 'Lukk bildet' }).click();
+	await expect(dialog).toBeHidden();
+	await expect(opener).toBeFocused();
 });
 
 test('news photos retain their proportions and the back link clears the header', async ({

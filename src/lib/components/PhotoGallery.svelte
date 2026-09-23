@@ -10,7 +10,8 @@
 		grouped = false
 	}: { items: readonly Photo[]; locale: Locale; grouped?: boolean } = $props();
 	let dialog: HTMLDialogElement;
-	let selected = $state<Photo | null>(null);
+	let selectedIndex = $state<number | null>(null);
+	const selected = $derived(selectedIndex === null ? null : (items[selectedIndex] ?? null));
 	const text = $derived(getMessages(locale));
 	const sections = $derived(
 		grouped
@@ -23,9 +24,22 @@
 	);
 
 	async function open(photo: Photo) {
-		selected = photo;
+		selectedIndex = items.indexOf(photo);
 		await tick();
 		dialog.showModal();
+	}
+
+	async function changePhoto(index: number) {
+		if (!items.length) return;
+		selectedIndex = (index + items.length) % items.length;
+		await tick();
+		dialog
+			.querySelector<HTMLButtonElement>('.thumbnail[aria-pressed="true"]')
+			?.scrollIntoView({ block: 'nearest', inline: 'center' });
+	}
+
+	function movePhoto(offset: number) {
+		if (selectedIndex !== null) void changePhoto(selectedIndex + offset);
 	}
 </script>
 
@@ -59,26 +73,71 @@
 
 <dialog
 	bind:this={dialog}
-	aria-label={selected?.alt[locale] || text.nav.pictures}
-	onclose={() => (selected = null)}
+	aria-label={`${text.nav.pictures}: ${selected?.alt[locale] ?? ''}`}
+	onclose={() => (selectedIndex = null)}
 	onclick={(event) => {
 		if (event.target === dialog) dialog.close();
 	}}
 	onkeydown={(event) => {
-		if (event.key === 'Escape') dialog.close();
+		if (selectedIndex === null) return;
+		if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+			event.preventDefault();
+			movePhoto(event.key === 'ArrowLeft' ? -1 : 1);
+		}
 	}}
 >
-	{#if selected}
+	{#if selected && selectedIndex !== null}
 		<div class="viewer">
-			<form method="dialog">
-				<button type="submit">{text.closePicture} <span aria-hidden="true">×</span></button>
-			</form>
-			<enhanced:img
-				src={getEnhancedImage(selected.id)}
-				alt={selected.alt[locale]}
-				sizes="95vw"
-			/>
-			<p>{selected.alt[locale]}</p>
+			<div class="viewer-header">
+				<span aria-live="polite">{selectedIndex + 1} / {items.length}</span>
+				<button
+					type="button"
+					class="close"
+					aria-label={text.closePicture}
+					onclick={() => dialog.close()}><span aria-hidden="true">×</span></button
+				>
+			</div>
+			<div class="stage">
+				<enhanced:img
+					src={getEnhancedImage(selected.id)}
+					alt={selected.alt[locale]}
+					sizes="95vw"
+				/>
+				{#if items.length > 1}
+					<button
+						type="button"
+						class="arrow previous"
+						aria-label={text.previousPicture}
+						onclick={() => movePhoto(-1)}><span aria-hidden="true">‹</span></button
+					>
+					<button
+						type="button"
+						class="arrow next"
+						aria-label={text.nextPicture}
+						onclick={() => movePhoto(1)}><span aria-hidden="true">›</span></button
+					>
+				{/if}
+			</div>
+			<p class="caption">{selected.alt[locale]}</p>
+			<div class="thumbnails" role="group" aria-label={text.galleryThumbnails}>
+				{#each items as photo, index (photo.id)}
+					<button
+						type="button"
+						class="thumbnail"
+						class:active={index === selectedIndex}
+						aria-label={`${index + 1}: ${photo.alt[locale]}`}
+						aria-pressed={index === selectedIndex}
+						onclick={() => changePhoto(index)}
+					>
+						<enhanced:img
+							src={getEnhancedImage(photo.id)}
+							alt=""
+							loading="lazy"
+							sizes="80px"
+						/>
+					</button>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </dialog>
@@ -128,11 +187,14 @@
 		line-height: 1.4;
 	}
 	dialog {
-		max-width: 100vw;
-		max-height: 100dvh;
-		padding: 1rem;
+		width: min(90rem, calc(100vw - 1rem));
+		height: min(60rem, calc(100dvh - 1rem));
+		max-width: none;
+		max-height: none;
+		padding: 0;
 		border: 0;
-		background: transparent;
+		border-radius: 0.75rem;
+		background: #0d1913;
 		color: white;
 	}
 	dialog::backdrop {
@@ -140,41 +202,100 @@
 	}
 	.viewer {
 		display: grid;
-		justify-items: center;
-		gap: 0.75rem;
-		max-width: 90rem;
+		grid-template-rows: auto minmax(0, 1fr) auto auto;
+		height: 100%;
 	}
-	.viewer form {
-		justify-self: end;
+	.viewer-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.4rem 0.75rem 0.4rem 1rem;
 	}
 	.viewer button {
-		min-height: 44px;
-		padding: 0.6rem 1rem;
-		border: 1px solid #b9c9be;
-		border-radius: 999px;
-		background: #173326;
+		border: 0;
+		background: rgb(13 25 19 / 85%);
 		color: white;
 		font: inherit;
 		cursor: pointer;
 	}
-	.viewer button span {
-		margin-left: 0.5rem;
-		font-size: 1.4rem;
+	.viewer button:focus-visible {
+		outline: 2px solid #f4cf78;
+		outline-offset: 2px;
 	}
-	.viewer :global(picture) {
-		display: contents;
+	.viewer .close {
+		min-width: 44px;
+		min-height: 44px;
+		border-radius: 50%;
 	}
-	.viewer :global(img) {
+	.close span {
+		font-size: 2rem;
+		line-height: 1;
+	}
+	.stage {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-height: 0;
+		overflow: hidden;
+	}
+	.stage :global(picture) {
 		display: block;
-		width: auto;
-		height: auto;
-		max-width: 100%;
-		max-height: calc(100dvh - 10rem);
+		width: 100%;
+		height: 100%;
+	}
+	.stage :global(img) {
+		display: block;
+		width: 100%;
+		height: 100%;
 		object-fit: contain;
 	}
-	.viewer p {
+	.viewer .arrow {
+		position: absolute;
+		top: 50%;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		transform: translateY(-50%);
+	}
+	.arrow span {
+		font-size: 2rem;
+		line-height: 1;
+	}
+	.previous {
+		left: 0.5rem;
+	}
+	.next {
+		right: 0.5rem;
+	}
+	.caption {
 		margin: 0;
+		padding: 0.65rem 1rem;
 		text-align: center;
+	}
+	.thumbnails {
+		display: flex;
+		gap: 0.5rem;
+		overflow-x: auto;
+		padding: 0.5rem 1rem 1rem;
+	}
+	.viewer .thumbnail {
+		flex: none;
+		width: 5rem;
+		height: 4rem;
+		padding: 0;
+		overflow: hidden;
+		border: 3px solid transparent;
+		border-radius: 0.35rem;
+	}
+	.viewer .thumbnail.active {
+		border-color: #f4cf78;
+	}
+	.thumbnail :global(picture),
+	.thumbnail :global(img) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 	@media (min-width: 37.5rem) {
 		.photo-grid {
