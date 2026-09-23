@@ -257,15 +257,15 @@
 		place-items: center;
 		min-width: 44px;
 		min-height: 44px;
-		border: 1px solid transparent;
-		border-radius: 0.4rem;
 		text-decoration: none;
+	}
+	.languages a img {
+		filter: grayscale(100%);
 		opacity: 0.7;
 	}
-	.languages a.active {
+	.languages a.active img {
+		filter: grayscale(0);
 		opacity: 1;
-		border-color: #f4cf78;
-		background: rgb(255 255 255 / 12%);
 	}
 	footer {
 		padding: 3rem 0;

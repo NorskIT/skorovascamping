@@ -1,5 +1,9 @@
 # Project instructions
 
+## Git workflow
+
+- AI agents must make local changes only. Never commit or push changes to Git.
+
 ## SEO and public routes
 
 - Every public route that is added, removed, or renamed must update the central SEO route registry in the same change.
