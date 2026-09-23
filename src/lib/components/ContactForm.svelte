@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { trackLead } from '$lib/analytics/tracking';
+	import { trackLead, trackContact, ContactMethod } from '$lib/analytics/tracking';
 	import { getMessages, type Locale } from '$lib/i18n';
 	import { siteConfig } from '$lib/site';
 
@@ -10,15 +10,15 @@
 	const feedback = {
 		nb: {
 			success: 'Takk! Forespørselen er sendt.',
-			error: 'Kunne ikke sende nå. Prøv igjen eller ring oss.'
+			error: 'Kunne ikke sende nå. Prøv igjen eller send oss en e-post.'
 		},
 		en: {
 			success: 'Thank you! Your enquiry has been sent.',
-			error: 'Unable to send. Please try again or call us.'
+			error: 'Unable to send. Please try again or email us.'
 		},
 		de: {
 			success: 'Vielen Dank! Ihre Anfrage wurde gesendet.',
-			error: 'Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder rufen Sie uns an.'
+			error: 'Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns eine E-Mail.'
 		}
 	} as const;
 
@@ -118,7 +118,13 @@
 		</p>
 	</form>
 {:else}
-	<p class="notice">{text.contactUnavailable}</p>
+	<p class="notice">
+		{text.contactUnavailable}
+		<a
+			href={`mailto:${siteConfig.bookingEmail}`}
+			onclick={() => trackContact(ContactMethod.Email)}>{siteConfig.bookingEmail}</a
+		>
+	</p>
 {/if}
 
 <style>

@@ -5,7 +5,7 @@
 	import { getMessages, localizedPath } from '$lib/i18n';
 	import { getEnhancedImage, getImageUrl } from '$lib/images';
 	import { getSeoDocument, canonicalUrl } from '$lib/seo';
-	import { siteConfig, siteName } from '$lib/site';
+	import { siteName } from '$lib/site';
 
 	let { document }: { document: NewsDocument } = $props();
 	const Body = $derived(document.component);
@@ -30,9 +30,6 @@
 		href={resolve('/[...path]', { path: localizedPath('news', document.locale).slice(1) })}
 		>← {text.latestNews}</a
 	>
-	{#if document.status === 'review' && !siteConfig.isProduction}<p class="review">
-			{text.reviewBadge}
-		</p>{/if}
 	<p class="eyebrow">{document.eyebrow}</p>
 	<h1>{document.heading}</h1>
 	<time datetime={document.publishedAt}
@@ -54,11 +51,6 @@
 		margin-bottom: 2.5rem;
 		font-weight: 700;
 	}
-	.review {
-		padding: 0.7rem 1rem;
-		background: #fff4d9;
-		border-left: 4px solid #c58a17;
-	}
 	.eyebrow {
 		margin-top: 2rem;
 		color: #8c5c09;
@@ -78,16 +70,17 @@
 	}
 	.hero {
 		margin: 2.5rem 0;
-		max-height: 42rem;
-		overflow: hidden;
-		border-radius: 1rem;
 	}
-	.hero :global(picture),
+	.hero :global(picture) {
+		display: block;
+	}
 	.hero :global(img) {
 		display: block;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 42rem;
+		border-radius: 1rem;
 	}
 	article {
 		max-width: 46rem;

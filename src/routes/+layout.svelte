@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { initializeConsentAndAnalytics, showCookiePreferences } from '$lib/analytics/consent';
-	import { ContactMethod, trackContact } from '$lib/analytics/tracking';
+	import { ContactMethod, trackBooking, trackContact } from '$lib/analytics/tracking';
+	import { bookingUrl } from '$lib/booking';
+	import norwegianFlag from 'flag-icons/flags/4x3/no.svg?url';
+	import englishFlag from 'flag-icons/flags/4x3/gb.svg?url';
+	import germanFlag from 'flag-icons/flags/4x3/de.svg?url';
 	import favicon from '$lib/assets/favicon.svg';
 	import { getMessages, localizedPath, routeFromPath, type Locale } from '$lib/i18n';
 	import { siteConfig, siteName } from '$lib/site';
@@ -20,36 +25,52 @@
 	);
 	const text = $derived(getMessages(locale));
 	const currentRoute = $derived(routeFromPath(page.url.pathname));
+	const overHero = $derived(
+		['home', 'camping', 'experiences', 'skorovas', 'practical'].includes(currentRoute?.id ?? '')
+	);
 	const navigation = $derived([
 		['camping', text.nav.camping],
 		['experiences', text.nav.experiences],
 		['skorovas', text.nav.skorovas],
 		['practical', text.nav.practical],
-		['news', text.nav.news]
+		['news', text.nav.news],
+		['pictures', text.nav.pictures]
 	] as const);
 	const languageLinks = $derived(
 		(['nb', 'en', 'de'] as const).map((language) => ({
 			locale: language,
-			label: language === 'nb' ? 'NO' : language.toUpperCase(),
-			path: localizedPath(currentRoute?.id ?? 'home', language)
+			label: getMessages(language).languageName,
+			flag: { nb: norwegianFlag, en: englishFlag, de: germanFlag }[language],
+			path: localizedPath(
+				currentRoute?.id ?? (page.url.pathname.includes('/nyheter/') ? 'news' : 'home'),
+				language
+			)
 		}))
 	);
 
 	onMount(() => {
 		void initializeConsentAndAnalytics();
 	});
+	afterNavigate(() => {
+		menuOpen = false;
+	});
 	$effect(() => {
 		if (typeof document !== 'undefined') document.documentElement.lang = locale;
-		menuOpen = false;
 	});
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:window
+	onkeydown={(event) => {
+		if (event.key === 'Escape') menuOpen = false;
+	}}
+/>
 <div class="site-shell">
-	<header>
+	<header class:over-hero={overHero}>
 		<div class="header-inner wrap">
 			<a
 				class="brand"
+				onclick={() => (menuOpen = false)}
 				href={locale === 'nb'
 					? resolve('/')
 					: resolve('/[...path]', { path: localizedPath('home', locale).slice(1) })}
@@ -67,23 +88,29 @@
 			<nav id="main-nav" class:open={menuOpen} aria-label="Main navigation">
 				{#each navigation as [id, label] (id)}<a
 						href={resolve('/[...path]', { path: localizedPath(id, locale).slice(1) })}
-						>{label}</a
+						onclick={() => (menuOpen = false)}>{label}</a
 					>{/each}
 				<a
 					class="book"
-					href={resolve('/[...path]', {
-						path: localizedPath('contact', locale).slice(1)
-					})}
-					onclick={() => trackContact(ContactMethod.Booking)}>{text.book}</a
+					href={bookingUrl(locale)}
+					rel="external"
+					onclick={() => {
+						menuOpen = false;
+						trackBooking();
+					}}>{text.book}</a
 				>
 				<div class="languages" aria-label="Language">
 					{#each languageLinks as language (language.locale)}<a
 							class:active={language.locale === locale}
+							aria-label={language.label}
+							title={language.label}
+							aria-current={language.locale === locale ? 'true' : undefined}
+							onclick={() => (menuOpen = false)}
 							hreflang={language.locale}
 							href={language.path === '/'
 								? resolve('/')
 								: resolve('/[...path]', { path: language.path.slice(1) })}
-							>{language.label}</a
+							><img src={language.flag} alt="" width="28" height="21" /></a
 						>{/each}
 				</div>
 			</nav>
@@ -94,9 +121,12 @@
 		<div class="footer-inner wrap">
 			<div>
 				<strong>{siteName}</strong>
-				<p>Fjellro, friluftsliv og levende lokalhistorie i indre Namdal.</p>
+				<p>{text.tagline}</p>
 			</div>
 			<nav aria-label="Legal information">
+				<a href={resolve('/[...path]', { path: localizedPath('contact', locale).slice(1) })}
+					>{text.contactHeading}</a
+				>
 				<a href={resolve('/[...path]', { path: localizedPath('privacy', locale).slice(1) })}
 					>{text.privacy}</a
 				><a
@@ -106,7 +136,7 @@
 				><button type="button" onclick={showCookiePreferences}>{text.cookieSettings}</button
 				>
 			</nav>
-			{#if siteConfig.bookingPhone !== 'XXXXX'}<a
+			{#if siteConfig.bookingPhone}<a
 					class="phone"
 					href={`tel:${siteConfig.bookingPhone.replaceAll(' ', '')}`}
 					onclick={() => trackContact(ContactMethod.Phone)}>{siteConfig.bookingPhone}</a
@@ -148,12 +178,16 @@
 		flex: 1;
 	}
 	header {
-		position: absolute;
+		position: relative;
 		z-index: 20;
 		top: 0;
 		left: 0;
 		width: 100%;
 		color: white;
+		background: #173326;
+	}
+	header.over-hero {
+		position: absolute;
 		background: linear-gradient(180deg, rgb(10 35 23 / 72%), rgb(10 35 23 / 5%));
 	}
 	.header-inner {
@@ -190,7 +224,7 @@
 	header nav {
 		display: none;
 		position: absolute;
-		top: 5rem;
+		top: 100%;
 		left: 1rem;
 		right: 1rem;
 		padding: 1rem;
@@ -219,14 +253,19 @@
 		padding: 0.5rem;
 	}
 	.languages a {
-		padding: 0.25rem;
-		font-size: 0.75rem;
+		display: grid;
+		place-items: center;
+		min-width: 44px;
+		min-height: 44px;
+		border: 1px solid transparent;
+		border-radius: 0.4rem;
 		text-decoration: none;
 		opacity: 0.7;
 	}
 	.languages a.active {
 		opacity: 1;
-		text-decoration: underline;
+		border-color: #f4cf78;
+		background: rgb(255 255 255 / 12%);
 	}
 	footer {
 		padding: 3rem 0;
@@ -272,7 +311,7 @@
 		--cc-btn-secondary-hover-bg: #d1ddd4;
 		--cc-toggle-on-bg: #244d35;
 	}
-	@media (min-width: 70rem) {
+	@media (min-width: 80rem) {
 		.menu-button {
 			display: none;
 		}

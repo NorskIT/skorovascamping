@@ -7,7 +7,6 @@ declare global {
 		readonly PUBLIC_SITE_OPERATOR_NAME?: string;
 		readonly PUBLIC_SITE_OPERATOR_ORG_NUMBER?: string;
 		readonly PUBLIC_SITE_OPERATOR_ADDRESS?: string;
-		readonly PUBLIC_PRIVACY_CONTACT_EMAIL?: string;
 		readonly PUBLIC_PRIVACY_CONTACT_PHONE?: string;
 		readonly PUBLIC_BOOKING_PHONE?: string;
 		readonly PUBLIC_BOOKING_EMAIL?: string;
@@ -39,8 +38,6 @@ declare global {
 			env: Env & {
 				CONTACT_EMAIL?: ContactEmailBinding;
 				TURNSTILE_SECRET_KEY?: string;
-				CONTACT_RECIPIENT_EMAIL?: string;
-				CONTACT_FROM_EMAIL?: string;
 				CONTACT_RATE_LIMITER?: RateLimit;
 			};
 			ctx: ExecutionContext;

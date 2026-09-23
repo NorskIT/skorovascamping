@@ -8,6 +8,7 @@ export type PageId =
 	| 'skorovas'
 	| 'practical'
 	| 'news'
+	| 'pictures'
 	| 'contact'
 	| 'privacy'
 	| 'cookies';
@@ -29,6 +30,7 @@ const paths: Record<PageId, Record<Locale, string>> = {
 		de: '/de/praktische-informationen'
 	},
 	news: { nb: '/nyheter', en: '/en/news', de: '/de/neuigkeiten' },
+	pictures: { nb: '/bilder', en: '/en/pictures', de: '/de/bilder' },
 	contact: { nb: '/kontakt', en: '/en/contact', de: '/de/kontakt' },
 	privacy: { nb: '/personvern', en: '/en/privacy', de: '/de/datenschutz' },
 	cookies: { nb: '/informasjonskapsler', en: '/en/cookies', de: '/de/cookies' }
@@ -50,12 +52,14 @@ export function routeFromPath(path: string): LocalizedRoute | undefined {
 export const messages = {
 	nb: {
 		languageName: 'Norsk',
+		tagline: 'Fjellro, friluftsliv og levende lokalhistorie i indre Namdal.',
 		nav: {
 			camping: 'Camping',
 			experiences: 'Opplevelser',
 			skorovas: 'Om Skorovas',
 			practical: 'Praktisk informasjon',
 			news: 'Nyheter',
+			pictures: 'Bilder',
 			contact: 'Kontakt / bestill'
 		},
 		menu: 'Meny',
@@ -66,27 +70,32 @@ export const messages = {
 		noNews: 'Ingen publiserte nyheter ennå.',
 		backHome: 'Til forsiden',
 		contactHeading: 'Kontakt og bestilling',
-		contactIntro: 'Ring oss eller send en forespørsel. Vi svarer så raskt vi kan.',
+		contactIntro: 'Send oss en e-post eller en forespørsel. Vi svarer så raskt vi kan.',
 		name: 'Navn',
 		email: 'E-post',
 		phone: 'Telefon',
 		message: 'Melding',
 		send: 'Send forespørsel',
-		contactUnavailable: 'Kontaktskjemaet er ikke konfigurert ennå. Ta kontakt på telefon.',
+		contactUnavailable: 'Send oss gjerne en e-post med spørsmål om oppholdet.',
 		privacyNotice: 'Opplysningene brukes bare for å svare på henvendelsen din.',
-		reviewBadge: 'Innhold til faktakontroll',
+		seePictures: 'Se alle bildene',
+		closePicture: 'Lukk bildet',
+		openPicture: 'Vis hele bildet',
 		cookieSettings: 'Cookie-innstillinger',
 		privacy: 'Personvern',
 		cookies: 'Informasjonskapsler'
 	},
 	en: {
 		languageName: 'English',
+		tagline:
+			'Mountain tranquillity, outdoor adventures and living local history in inland Namdal.',
 		nav: {
 			camping: 'Camping',
 			experiences: 'Experiences',
 			skorovas: 'About Skorovas',
 			practical: 'Practical information',
 			news: 'News',
+			pictures: 'Pictures',
 			contact: 'Contact / book'
 		},
 		menu: 'Menu',
@@ -97,48 +106,53 @@ export const messages = {
 		noNews: 'No published news yet.',
 		backHome: 'Back to the front page',
 		contactHeading: 'Contact and booking',
-		contactIntro: 'Call us or send an enquiry. We will reply as soon as possible.',
+		contactIntro: 'Email us or send an enquiry. We will reply as soon as possible.',
 		name: 'Name',
 		email: 'Email',
 		phone: 'Phone',
 		message: 'Message',
 		send: 'Send enquiry',
-		contactUnavailable: 'The contact form has not been configured yet. Please call us.',
+		contactUnavailable: 'Please email us with any questions about your stay.',
 		privacyNotice: 'Your details are used only to answer your enquiry.',
-		reviewBadge: 'Content awaiting fact check',
+		seePictures: 'See all pictures',
+		closePicture: 'Close picture',
+		openPicture: 'View full picture',
 		cookieSettings: 'Cookie settings',
 		privacy: 'Privacy',
 		cookies: 'Cookies'
 	},
 	de: {
 		languageName: 'Deutsch',
+		tagline: 'Bergidylle, Naturerlebnisse und lebendige Ortsgeschichte im inneren Namdal.',
 		nav: {
 			camping: 'Camping',
 			experiences: 'Erlebnisse',
 			skorovas: 'Über Skorovas',
 			practical: 'Praktische Informationen',
 			news: 'Neuigkeiten',
+			pictures: 'Bilder',
 			contact: 'Kontakt / buchen'
 		},
 		menu: 'Menü',
 		closeMenu: 'Menü schließen',
-		book: 'Stellplatz anfragen',
+		book: 'Stellplatz buchen',
 		readMore: 'Mehr erfahren',
 		latestNews: 'Aktuelles',
 		noNews: 'Noch keine veröffentlichten Neuigkeiten.',
 		backHome: 'Zur Startseite',
 		contactHeading: 'Kontakt und Buchung',
 		contactIntro:
-			'Rufen Sie uns an oder senden Sie eine Anfrage. Wir antworten so bald wie möglich.',
+			'Schreiben Sie uns eine E-Mail oder senden Sie eine Anfrage. Wir antworten so bald wie möglich.',
 		name: 'Name',
 		email: 'E-Mail',
 		phone: 'Telefon',
 		message: 'Nachricht',
 		send: 'Anfrage senden',
-		contactUnavailable:
-			'Das Kontaktformular ist noch nicht eingerichtet. Bitte rufen Sie uns an.',
+		contactUnavailable: 'Schreiben Sie uns gerne eine E-Mail mit Fragen zu Ihrem Aufenthalt.',
 		privacyNotice: 'Ihre Angaben werden nur zur Beantwortung Ihrer Anfrage verwendet.',
-		reviewBadge: 'Inhalt wartet auf Faktenprüfung',
+		seePictures: 'Alle Bilder ansehen',
+		closePicture: 'Bild schließen',
+		openPicture: 'Ganzes Bild ansehen',
 		cookieSettings: 'Cookie-Einstellungen',
 		privacy: 'Datenschutz',
 		cookies: 'Cookies'

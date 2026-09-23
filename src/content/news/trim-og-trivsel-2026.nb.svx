@@ -12,7 +12,7 @@ eyebrow: Aktivitet
 heroImage: trim-og-trivsel
 heroAlt: Informasjon om Trim og Trivsel i Skorovas
 publishedAt: 2026-06-01
-updatedAt: 2026-09-05
+updatedAt: 2026-09-23
 ---
 
-Fra 1. juni og ut oktober finnes det 26 poster i Skorovasområdet som kan besøkes ved hjelp av Trimpoeng-appen. Deltakere registrerer postene i appen. Det blir premiering etter sesongen. Kontroller årets regler og lenke til konkurransen før publisering.
+Fra 1. juni og ut oktober finnes det 26 poster i Skorovasområdet som kan besøkes ved hjelp av Trimpoeng-appen. Deltakere registrerer postene i appen. Det blir premiering etter sesongen.

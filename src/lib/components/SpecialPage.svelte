@@ -6,13 +6,26 @@
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import { getNews } from '$lib/content';
 	import { getMessages, type LocalizedRoute } from '$lib/i18n';
-	import { getImageUrl } from '$lib/images';
+	import { getEnhancedImage } from '$lib/images';
 	import { getSeoDocument } from '$lib/seo';
 	import { siteConfig } from '$lib/site';
 
 	let { route }: { route: LocalizedRoute } = $props();
 	const text = $derived(getMessages(route.locale));
 	const news = $derived(getNews(route.locale, !siteConfig.isProduction));
+	const privacyContact = [
+		siteConfig.operator.privacyEmail === 'XXXXX'
+			? siteConfig.bookingEmail
+			: siteConfig.operator.privacyEmail,
+		siteConfig.operator.privacyPhone
+	]
+		.filter(Boolean)
+		.join(' / ');
+	const campioNotice = {
+		nb: 'Når du velger «Bestill plass», går du videre til Campio for å gjennomføre bestillingen. Campio behandler booking- og betalingsopplysningene på sin nettside. Lenken laster ikke Campio-innhold eller setter Campio-informasjonskapsler på denne nettsiden.',
+		en: 'When you select “Book a pitch”, you go to Campio to complete your booking. Campio processes booking and payment details on its own website. The link does not load Campio content or set Campio cookies on this website.',
+		de: 'Wenn Sie „Stellplatz buchen“ wählen, gelangen Sie zu Campio, um Ihre Buchung abzuschließen. Campio verarbeitet Buchungs- und Zahlungsdaten auf der eigenen Website. Der Link lädt hier keine Campio-Inhalte und setzt keine Campio-Cookies.'
+	};
 	const heading = $derived(
 		route.id === 'news'
 			? text.latestNews
@@ -26,7 +39,7 @@
 		nb: {
 			privacy: [
 				'Behandlingsansvarlig',
-				`${siteConfig.operator.name}, organisasjonsnummer ${siteConfig.operator.organisationNumber}, er behandlingsansvarlig. Adresse: ${siteConfig.operator.address}. Kontakt: ${siteConfig.operator.privacyEmail} / ${siteConfig.operator.privacyPhone}.`,
+				`${siteConfig.operator.name}, organisasjonsnummer ${siteConfig.operator.organisationNumber}, er behandlingsansvarlig. Adresse: ${siteConfig.operator.address}. Kontakt: ${privacyContact}.`,
 				'Kontaktskjema og analyse',
 				'Vi bruker opplysningene du sender bare for å svare på henvendelsen. Skjemaet beskyttes av Cloudflare Turnstile. Google Analytics brukes bare etter samtykke, og vi sender aldri innhold fra skjemaet til Analytics. Google Calendar lastes først etter eget samtykke til eksternt innhold.'
 			],
@@ -40,7 +53,7 @@
 		en: {
 			privacy: [
 				'Data controller',
-				`${siteConfig.operator.name}, organisation number ${siteConfig.operator.organisationNumber}, is the data controller. Address: ${siteConfig.operator.address}. Contact: ${siteConfig.operator.privacyEmail} / ${siteConfig.operator.privacyPhone}.`,
+				`${siteConfig.operator.name}, organisation number ${siteConfig.operator.organisationNumber}, is the data controller. Address: ${siteConfig.operator.address}. Contact: ${privacyContact}.`,
 				'Contact form and analytics',
 				'We use submitted details only to answer your enquiry. Cloudflare Turnstile protects the form. Google Analytics runs only after consent, and form content is never sent to Analytics. Google Calendar loads only after separate consent to external content.'
 			],
@@ -54,7 +67,7 @@
 		de: {
 			privacy: [
 				'Verantwortlicher',
-				`${siteConfig.operator.name}, Organisationsnummer ${siteConfig.operator.organisationNumber}, ist verantwortlich. Adresse: ${siteConfig.operator.address}. Kontakt: ${siteConfig.operator.privacyEmail} / ${siteConfig.operator.privacyPhone}.`,
+				`${siteConfig.operator.name}, Organisationsnummer ${siteConfig.operator.organisationNumber}, ist verantwortlich. Adresse: ${siteConfig.operator.address}. Kontakt: ${privacyContact}.`,
 				'Kontaktformular und Analyse',
 				'Wir verwenden Ihre Angaben nur zur Beantwortung Ihrer Anfrage. Cloudflare Turnstile schützt das Formular. Google Analytics wird nur nach Einwilligung verwendet; Formulardaten werden nie an Analytics gesendet. Google Calendar wird erst nach gesonderter Einwilligung geladen.'
 			],
@@ -76,9 +89,13 @@
 		<div class="news-grid">
 			{#each news as item (item.path)}
 				<a class="news-card" href={resolve('/[...path]', { path: item.path.slice(1) })}
-					><img src={getImageUrl(item.heroImage)} alt={item.heroAlt} loading="lazy" />
+					><enhanced:img
+						src={getEnhancedImage(item.heroImage)}
+						alt={item.heroAlt}
+						loading="lazy"
+						sizes="(min-width: 768px) 45vw, 95vw"
+					/>
 					<div>
-						{#if item.status === 'review'}<small>{text.reviewBadge}</small>{/if}
 						<h2>{item.heading}</h2>
 						<p>{item.description}</p>
 					</div></a
@@ -89,7 +106,7 @@
 		<p class="lead">{text.contactIntro}</p>
 		<div class="contact-grid">
 			<div class="contact-details">
-				{#if siteConfig.bookingPhone !== 'XXXXX'}<a
+				{#if siteConfig.bookingPhone}<a
 						href={`tel:${siteConfig.bookingPhone.replaceAll(' ', '')}`}
 						onclick={() => trackContact(ContactMethod.Phone)}
 						><small>{text.phone}</small>{siteConfig.bookingPhone}</a
@@ -108,6 +125,12 @@
 			<p>{legal[route.locale][route.id][1]}</p>
 			<h2>{legal[route.locale][route.id][2]}</h2>
 			<p>{legal[route.locale][route.id][3]}</p>
+			<h2>Campio</h2>
+			<p>{campioNotice[route.locale]}</p>
+			<a
+				href={`https://campio.no${route.locale === 'en' ? '' : `/${route.locale}`}/privacy-policy`}
+				>Campio – {text.privacy}</a
+			>
 			{#if route.id === 'cookies'}<button type="button" onclick={showCookiePreferences}
 					>{text.cookieSettings}</button
 				>{/if}
@@ -117,7 +140,7 @@
 
 <style>
 	.special {
-		padding-top: 9rem;
+		padding-top: clamp(3rem, 7vw, 6rem);
 		padding-bottom: 6rem;
 	}
 	.eyebrow {
@@ -150,7 +173,7 @@
 		background: white;
 		text-decoration: none;
 	}
-	.news-card img {
+	.news-card :global(img) {
 		display: block;
 		width: 100%;
 		aspect-ratio: 16/10;
@@ -158,10 +181,6 @@
 	}
 	.news-card div {
 		padding: 1.3rem;
-	}
-	.news-card small {
-		color: #8c5c09;
-		font-weight: 800;
 	}
 	.news-card h2 {
 		font:

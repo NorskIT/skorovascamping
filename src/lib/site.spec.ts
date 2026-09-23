@@ -23,6 +23,15 @@ describe('site configuration', () => {
 			PUBLIC_TURNSTILE_SITE_KEY: 'site-key'
 		});
 		expect(config.contactFormEnabled).toBe(true);
+		expect(config.operator.privacyEmail).toBe(config.bookingEmail);
+	});
+
+	it('uses the confirmed email without inventing a phone number', () => {
+		const config = createPublicSiteConfig({});
+		expect(config.bookingEmail).toBe('booking@skorovascamping.no');
+		expect(config.bookingPhone).toBe('');
+		expect(config.operator.privacyPhone).toBe('');
+		expect(createPublicSiteConfig({ PUBLIC_BOOKING_PHONE: 'XXXXX' }).bookingPhone).toBe('');
 	});
 
 	it('only enables analytics for a completely configured production build', () => {
@@ -32,7 +41,7 @@ describe('site configuration', () => {
 			PUBLIC_SITE_OPERATOR_NAME: 'Skorovas S-lag SA',
 			PUBLIC_SITE_OPERATOR_ORG_NUMBER: '947 534 777',
 			PUBLIC_SITE_OPERATOR_ADDRESS: 'Myra 2, 7893 Skorovatn',
-			PUBLIC_PRIVACY_CONTACT_EMAIL: 'personvern@example.no'
+			PUBLIC_BOOKING_EMAIL: 'booking@example.no'
 		});
 
 		expect(config.isProduction).toBe(true);

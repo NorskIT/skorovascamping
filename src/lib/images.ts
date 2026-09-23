@@ -1,3 +1,5 @@
+import { photos } from '$lib/photos';
+
 export const imageIds = [
 	'skorovas-village-from-above',
 	'skorovas-camping-pitches',
@@ -7,7 +9,8 @@ export const imageIds = [
 	'skorovatn-chapel',
 	'skorovas-winter-landscape',
 	'trim-og-trivsel',
-	'skorovasmarsjen'
+	'skorovasmarsjen',
+	...photos.map((photo) => photo.id)
 ] as const;
 
 export type ImageId = (typeof imageIds)[number];

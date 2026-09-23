@@ -24,3 +24,9 @@ export function trackLead(): void {
 
 	window.gtag('event', AnalyticsEvent.GenerateLead);
 }
+
+export function trackBooking(): void {
+	if (!siteConfig.analyticsEnabled || typeof window === 'undefined' || !window.gtag) return;
+
+	window.gtag('event', AnalyticsEvent.BeginBooking, { provider: 'campio' });
+}

@@ -1,6 +1,6 @@
 import { contentDocuments, newsDocuments, type ContentStatus } from '$lib/content';
 import { locales, localizedPath, type Locale, type PageId } from '$lib/i18n';
-import { productionOrigin, siteName } from '$lib/site';
+import { productionOrigin, siteConfig, siteName } from '$lib/site';
 
 export interface SeoDocument {
 	path: string;
@@ -132,7 +132,8 @@ export function canonicalUrl(path: string): string {
 export function alternateDocuments(document: SeoDocument): readonly SeoDocument[] {
 	return seoDocuments.filter(
 		(candidate) =>
-			candidate.translationKey === document.translationKey && candidate.status === 'published'
+			candidate.translationKey === document.translationKey &&
+			(candidate.status === 'published' || !siteConfig.isProduction)
 	);
 }
 

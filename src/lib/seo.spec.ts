@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { contentDocuments } from './content';
 import { locales, localizedRoutes } from './i18n';
-import { canonicalUrl, createSitemapXml, seoDocuments } from './seo';
+import {
+	alternateDocuments,
+	canonicalUrl,
+	createSitemapXml,
+	getSeoDocument,
+	seoDocuments
+} from './seo';
 
 describe('SEO configuration', () => {
 	it('registers every localized route and content document', () => {
@@ -27,5 +33,20 @@ describe('SEO configuration', () => {
 		expect(sitemap).toContain('<loc>https://skorovascamping.no/en/privacy</loc>');
 		expect(sitemap).not.toContain('/nyheter/skorovasmarsjen');
 		expect(sitemap).not.toContain('beta.skorovascamping.no');
+	});
+
+	it('registers translated picture routes and previews reciprocal language links', () => {
+		const paths = ['/bilder', '/en/pictures', '/de/bilder'];
+		for (const path of paths) {
+			const document = getSeoDocument(path);
+			expect(document.status).toBe('review');
+			expect(alternateDocuments(document).map((alternate) => alternate.path)).toEqual(
+				expect.arrayContaining(paths)
+			);
+			expect(createSitemapXml()).not.toContain(`<loc>${canonicalUrl(path)}</loc>`);
+		}
+		expect(new Set(paths.map((path) => getSeoDocument(path).title)).size).toBe(3);
+		expect(new Set(paths.map((path) => getSeoDocument(path).description)).size).toBe(3);
+		expect(() => getSeoDocument('/en/bilder')).toThrow('Missing SEO configuration');
 	});
 });

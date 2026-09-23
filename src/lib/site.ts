@@ -1,3 +1,5 @@
+import { defaultBookingEmail } from './contact-email.js';
+
 export const siteName = 'Skorovas Camping';
 export const productionOrigin = 'https://skorovascamping.no';
 
@@ -13,7 +15,6 @@ export interface PublicSiteEnvironment {
 	PUBLIC_SITE_OPERATOR_NAME?: string;
 	PUBLIC_SITE_OPERATOR_ORG_NUMBER?: string;
 	PUBLIC_SITE_OPERATOR_ADDRESS?: string;
-	PUBLIC_PRIVACY_CONTACT_EMAIL?: string;
 	PUBLIC_PRIVACY_CONTACT_PHONE?: string;
 	PUBLIC_BOOKING_PHONE?: string;
 	PUBLIC_BOOKING_EMAIL?: string;
@@ -44,6 +45,8 @@ export interface PublicSiteConfig {
 const placeholder = 'XXXXX';
 
 const valueOrPlaceholder = (value?: string) => value?.trim() || placeholder;
+const optionalPhone = (value?: string) =>
+	value?.trim() === placeholder ? '' : value?.trim() || '';
 
 export function createPublicSiteConfig(environment: PublicSiteEnvironment): PublicSiteConfig {
 	const target = Object.values(DeployTarget).includes(
@@ -52,21 +55,21 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		? (environment.PUBLIC_DEPLOY_TARGET as DeployTarget)
 		: DeployTarget.Local;
 	const gtmContainerId = environment.PUBLIC_GTM_CONTAINER_ID?.trim() ?? '';
+	const bookingEmail = environment.PUBLIC_BOOKING_EMAIL?.trim() || defaultBookingEmail;
 	const operator = {
 		name: valueOrPlaceholder(environment.PUBLIC_SITE_OPERATOR_NAME),
 		organisationNumber: valueOrPlaceholder(environment.PUBLIC_SITE_OPERATOR_ORG_NUMBER),
 		address: valueOrPlaceholder(environment.PUBLIC_SITE_OPERATOR_ADDRESS),
-		privacyEmail: valueOrPlaceholder(environment.PUBLIC_PRIVACY_CONTACT_EMAIL),
-		privacyPhone: valueOrPlaceholder(environment.PUBLIC_PRIVACY_CONTACT_PHONE)
+		privacyEmail: bookingEmail,
+		privacyPhone: optionalPhone(environment.PUBLIC_PRIVACY_CONTACT_PHONE)
 	};
 	const operatorIsComplete =
 		operator.name !== placeholder &&
 		operator.organisationNumber !== placeholder &&
 		operator.address !== placeholder &&
-		(operator.privacyEmail !== placeholder || operator.privacyPhone !== placeholder);
+		(operator.privacyEmail !== placeholder || Boolean(operator.privacyPhone));
 	const isProduction = target === DeployTarget.Production;
-	const bookingPhone = valueOrPlaceholder(environment.PUBLIC_BOOKING_PHONE);
-	const bookingEmail = valueOrPlaceholder(environment.PUBLIC_BOOKING_EMAIL);
+	const bookingPhone = optionalPhone(environment.PUBLIC_BOOKING_PHONE);
 	const turnstileSiteKey = environment.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? '';
 
 	return {

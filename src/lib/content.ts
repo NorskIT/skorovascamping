@@ -14,7 +14,7 @@ const dateSchema = z
 	.refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), 'Invalid date');
 
 const pageMetadataSchema = z.object({
-	id: z.enum(['home', 'camping', 'experiences', 'skorovas', 'practical']),
+	id: z.enum(['home', 'camping', 'experiences', 'skorovas', 'practical', 'pictures']),
 	locale: z.enum(locales),
 	kind: z.literal('page'),
 	status: z.enum(contentStatus),
@@ -68,13 +68,16 @@ export interface NewsDocument extends Omit<ContentDocument, 'id' | 'kind'> {
 	publishedAt: string;
 }
 
-interface SvxModule {
+interface ContentModule {
 	default: Component;
 	metadata: unknown;
 }
 
-const modules = import.meta.glob<SvxModule>('/src/content/pages/*.svx', { eager: true });
-const newsModules = import.meta.glob<SvxModule>('/src/content/news/*.svx', { eager: true });
+// Native Svelte content exports the same validated metadata as MDsveX frontmatter.
+const modules = import.meta.glob<ContentModule>('/src/content/pages/*.{svx,svelte}', {
+	eager: true
+});
+const newsModules = import.meta.glob<ContentModule>('/src/content/news/*.svx', { eager: true });
 
 export const contentDocuments: readonly ContentDocument[] = Object.values(modules).map((module) => {
 	const metadata = pageMetadataSchema.parse(module.metadata);
@@ -121,7 +124,14 @@ export function assertContentIntegrity(): void {
 	const newsPaths = newsDocuments.map((document) => document.path);
 	if (new Set(newsPaths).size !== newsPaths.length) throw new Error('Duplicate news path');
 
-	for (const id of ['home', 'camping', 'experiences', 'skorovas', 'practical'] as const) {
+	for (const id of [
+		'home',
+		'camping',
+		'experiences',
+		'skorovas',
+		'practical',
+		'pictures'
+	] as const) {
 		for (const locale of locales) {
 			if (!getContentDocument(id, locale))
 				throw new Error(`Missing content: ${id}:${locale}`);

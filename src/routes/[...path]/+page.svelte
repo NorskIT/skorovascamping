@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ContentPage from '$lib/components/ContentPage.svelte';
 	import NewsArticle from '$lib/components/NewsArticle.svelte';
+	import PicturesPage from '$lib/components/PicturesPage.svelte';
 	import SpecialPage from '$lib/components/SpecialPage.svelte';
 	import { getContentDocumentByPath, getNewsDocumentByPath } from '$lib/content';
 	import { routeFromPath } from '$lib/i18n';
@@ -10,6 +11,8 @@
 	const route = $derived(routeFromPath(data.path));
 </script>
 
-{#if content}<ContentPage document={content} />{:else if article}<NewsArticle
-		document={article}
-	/>{:else if route}<SpecialPage {route} />{/if}
+{#if content?.id === 'pictures'}<PicturesPage document={content} />{:else if content}<ContentPage
+		document={content}
+	/>{:else if article}<NewsArticle document={article} />{:else if route}<SpecialPage
+		{route}
+	/>{/if}

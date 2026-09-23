@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { siteConfig } from '$lib/site';
 
 import type { RequestHandler } from './$types';
 
@@ -58,12 +59,7 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 	}
 
 	const env = platform?.env;
-	if (
-		!env?.TURNSTILE_SECRET_KEY ||
-		!env.CONTACT_EMAIL ||
-		!env.CONTACT_RECIPIENT_EMAIL ||
-		!env.CONTACT_FROM_EMAIL
-	) {
+	if (!env?.TURNSTILE_SECRET_KEY || !env.CONTACT_EMAIL) {
 		return json({ ok: false, error: 'unavailable' }, { status: 503 });
 	}
 
@@ -87,8 +83,8 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 
 	const replyTo = payload.email || undefined;
 	await env.CONTACT_EMAIL.send({
-		to: env.CONTACT_RECIPIENT_EMAIL,
-		from: env.CONTACT_FROM_EMAIL,
+		to: siteConfig.bookingEmail,
+		from: siteConfig.bookingEmail,
 		replyTo,
 		subject: `Forespørsel fra Skorovas Camping (${payload.locale})`,
 		text: [

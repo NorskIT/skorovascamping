@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { trackContact, ContactMethod } from '$lib/analytics/tracking';
+	import { trackBooking } from '$lib/analytics/tracking';
+	import { bookingUrl } from '$lib/booking';
+	import PhotoGallery from '$lib/components/PhotoGallery.svelte';
+	import { photosForPage } from '$lib/photos';
 	import ExternalCalendar from '$lib/components/ExternalCalendar.svelte';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import type { ContentDocument } from '$lib/content';
@@ -15,6 +18,7 @@
 	const seo = $derived(getSeoDocument(document.path));
 	const hero = $derived(getEnhancedImage(document.heroImage));
 	const contactPath = $derived(localizedPath('contact', document.locale));
+	const pagePhotos = $derived(photosForPage(document.id));
 	const supportingLinks = $derived(
 		[
 			{ id: 'camping' as const, label: text.nav.camping },
@@ -27,7 +31,7 @@
 		'@type': 'Campground',
 		name: siteName,
 		url: new URL(document.path, productionOrigin).toString(),
-		...(siteConfig.bookingPhone !== 'XXXXX' ? { telephone: siteConfig.bookingPhone } : {})
+		...(siteConfig.bookingPhone ? { telephone: siteConfig.bookingPhone } : {})
 	});
 	const practicalGallery = $derived(
 		document.id === 'practical'
@@ -67,7 +71,7 @@
 <SeoHead document={seo} {structuredData} />
 
 <main>
-	<section class="hero">
+	<section class="hero" class:camping-hero={document.id === 'camping'}>
 		<div class="hero-media">
 			<enhanced:img src={hero} alt={document.heroAlt} fetchpriority="high" />
 		</div>
@@ -78,15 +82,12 @@
 			<p class="intro">{document.description}</p>
 			<a
 				class="button"
-				href={resolve('/[...path]', { path: contactPath.slice(1) })}
-				onclick={() => trackContact(ContactMethod.Booking)}>{text.book}</a
+				href={bookingUrl(document.locale)}
+				rel="external"
+				onclick={trackBooking}>{text.book}</a
 			>
 		</div>
 	</section>
-
-	{#if document.status === 'review' && !siteConfig.isProduction}
-		<div class="review wrap" role="status">{text.reviewBadge}</div>
-	{/if}
 
 	<section class="article wrap">
 		<div class="prose"><Body /></div>
@@ -94,11 +95,29 @@
 			<p class="aside-kicker">{text.book}</p>
 			<h2>{text.contactHeading}</h2>
 			<p>{text.contactIntro}</p>
+			<a
+				class="button aside-book"
+				href={bookingUrl(document.locale)}
+				rel="external"
+				onclick={trackBooking}>{text.book}</a
+			>
 			<a class="text-link" href={resolve('/[...path]', { path: contactPath.slice(1) })}
 				>{text.nav.contact} →</a
 			>
 		</aside>
 	</section>
+
+	{#if pagePhotos.length}
+		<section class="page-photos wrap" aria-label={text.nav.pictures}>
+			<PhotoGallery items={pagePhotos} locale={document.locale} />
+			<a
+				class="text-link all-pictures"
+				href={resolve('/[...path]', {
+					path: localizedPath('pictures', document.locale).slice(1)
+				})}>{text.seePictures} →</a
+			>
+		</section>
+	{/if}
 
 	{#if document.id === 'home'}
 		<section class="link-section wrap" aria-labelledby="explore-title">
@@ -211,12 +230,18 @@
 		font-weight: 800;
 		text-decoration: none;
 	}
-	.review {
+	.page-photos {
+		padding-bottom: clamp(3rem, 7vw, 6rem);
+	}
+	.all-pictures {
+		display: inline-block;
 		margin-top: 1.5rem;
-		padding: 0.75rem 1rem;
-		border-left: 4px solid #c58a17;
-		background: #fff4d9;
-		font-weight: 700;
+	}
+	.aside-book {
+		margin-bottom: 1rem;
+	}
+	aside .text-link {
+		display: block;
 	}
 	.article {
 		display: grid;
@@ -320,6 +345,11 @@
 	.gallery figcaption {
 		padding: 0.75rem 1rem;
 		font-weight: 700;
+	}
+	@media (max-width: 47.999rem) {
+		.camping-hero .hero-media :global(img) {
+			object-position: 32% center;
+		}
 	}
 	@media (min-width: 48rem) {
 		.article {

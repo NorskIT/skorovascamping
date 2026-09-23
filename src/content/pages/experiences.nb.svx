@@ -7,9 +7,9 @@ title: Opplevelser og aktiviteter i Skorovas
 description: Opplev fjellturer, fiske, vinterlandskap, lokal historie og arrangementer rundt Skorovas i Namdalen.
 heading: Opplevelser i Skorovas
 eyebrow: Aktiv hele året
-heroImage: skorovas-winter-landscape
-heroAlt: Vinterlandskap i fjellene ved Skorovas
-updatedAt: 2026-09-05
+heroImage: mountain-lake-landscape
+heroAlt: Fjell og vatn i turterrenget rundt Skorovas
+updatedAt: 2026-09-23
 ---
 
 ## Fjell, vatn og villmark
