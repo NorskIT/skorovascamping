@@ -82,28 +82,57 @@ The existing `.com` website remains untouched during this setup.
 
 All public pages are registered in `src/lib/seo.ts`. Adding, removing or renaming a page must update that registry in the same change; it is the source for canonical URLs and `sitemap.xml`. A unit test fails if a static page is missing from the registry. Additional rules are documented in `AGENTS.md`.
 
-Google Analytics is loaded through Google Tag Manager only on production and only after the public configuration is complete. Add these non-secret values as GitHub repository or environment variables:
+Google Analytics is loaded through Google Tag Manager only on production and only after the public configuration is complete. Add these non-secret values under **Settings > Environments > beta / production > Environment variables** (see the full configuration table below):
 
 - `PUBLIC_GTM_CONTAINER_ID`
 - `PUBLIC_SITE_OPERATOR_NAME`
 - `PUBLIC_SITE_OPERATOR_ORG_NUMBER`
 - `PUBLIC_SITE_OPERATOR_ADDRESS`
-- `PUBLIC_PRIVACY_CONTACT_EMAIL`
 - `PUBLIC_PRIVACY_CONTACT_PHONE`
 
 See `.env.example` for local configuration. Missing operator values render as `XXXXX`; incomplete configuration prevents GTM from loading. Beta still renders the cookie-consent interface for review but never loads GTM.
 
 ## Content and translations
 
-Landing pages live in `src/content/pages` and news articles in `src/content/news`. Frontmatter is validated during the build. Core content uses a shared page ID in `nb`, `en` and `de`; routes and language links are defined centrally in `src/lib/i18n.ts`.
+Landing pages live in `src/content/pages` and news articles in `src/content/news`. Content metadata is validated during the build: MDsveX pages use frontmatter, while native Svelte pages export `metadata` from a `<script module>` block. The new picture pages use native Svelte to avoid MDsveX 0.12.8's generated legacy module syntax. Core content uses a shared page ID in `nb`, `en` and `de`; routes and language links are defined centrally in `src/lib/i18n.ts`.
 
-Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta with a warning, remains `noindex`, is excluded from the sitemap and blocks production builds. The verification checklist is in `docs/content-review.md`.
+Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta without a public review badge, remains `noindex`, is excluded from the sitemap and blocks production builds. Language alternatives can be previewed on beta; production only exposes published translations. The verification checklist is in `docs/content-review.md`.
+
+The picture gallery uses localized routes: `/bilder`, `/en/pictures` and `/de/bilder`. Routing and translations are managed centrally in `src/lib/i18n.ts`; this project does not use Paraglide. The photo catalogue in `src/lib/photos.ts` provides translated captions and page selections. Photos in `src/lib/assets/content` use the existing responsive image pipeline. Original September uploads are preserved locally in the ignored `.local/image-originals` directory and are not deployed.
+
+## Booking
+
+Booking buttons link to Skorovas Camping on Campio in the visitor's language. The URL is centralized in `src/lib/booking.ts`; this integration needs no API credentials. The link loads no Campio scripts or cookies on this website. Booking clicks emit `begin_booking` through the existing production analytics configuration.
+
+The default contact address is `booking@skorovascamping.no`; `PUBLIC_BOOKING_EMAIL` can override it. Leave `PUBLIC_BOOKING_PHONE` empty until an actual phone number has been confirmed. No default phone number is provided. Prices remain `XXX` until approved.
 
 ## Contact form
 
-The form fails closed until all Cloudflare values are configured. Add `PUBLIC_BOOKING_PHONE`, `PUBLIC_BOOKING_EMAIL` and `PUBLIC_TURNSTILE_SITE_KEY` as GitHub variables for the rendered site.
+All deployed configuration is maintained in GitHub. No Worker variables or secrets need to be entered manually in Cloudflare. The reusable deployment job selects the GitHub environment `beta` or `production`, builds with its public variables, and deploys with its server secrets. Validation and deployment are defined directly in `.github/workflows/_deploy-worker.yml`, with no separate deployment scripts. The workflow uses the installed Wrangler's supported `deploy --secrets-file` option to upload code and secrets together. Temporary files are private and removed after the command; secret values are never placed in command arguments or printed by the workflow.
 
-Create a Turnstile widget for both site hostnames. Add `TURNSTILE_SECRET_KEY`, `CONTACT_RECIPIENT_EMAIL` and `CONTACT_FROM_EMAIL` as encrypted Worker secrets in both Cloudflare environments. Configure a Cloudflare Email Service binding named `CONTACT_EMAIL`; the sender address must be permitted by the account. Rate limiting is already declared in `wrangler.jsonc`.
+Put shared values under **Settings > Secrets and variables > Actions**. Use **Settings > Environments > beta / production** only for values that differ, such as the production GTM ID or separate Turnstile widgets. Environment values override repository defaults.
+
+| GitHub type | Name                              | Value / requirement                                                                                               |
+| ----------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Variable    | `PUBLIC_BOOKING_EMAIL`            | Single email address for booking, privacy, and contact sender/recipient; defaults to `booking@skorovascamping.no` |
+| Variable    | `PUBLIC_BOOKING_PHONE`            | Optional; leave unset until a real number is confirmed                                                            |
+| Variable    | `PUBLIC_SITE_OPERATOR_NAME`       | Legal business name                                                                                               |
+| Variable    | `PUBLIC_SITE_OPERATOR_ORG_NUMBER` | Organisation number                                                                                               |
+| Variable    | `PUBLIC_SITE_OPERATOR_ADDRESS`    | Business address                                                                                                  |
+| Variable    | `PUBLIC_PRIVACY_CONTACT_PHONE`    | Optional; confirmed number only                                                                                   |
+| Variable    | `PUBLIC_GTM_CONTAINER_ID`         | Optional; production GTM container ID. Leave unset for beta                                                       |
+| Variable    | `PUBLIC_TURNSTILE_SITE_KEY`       | Required to enable the contact form                                                                               |
+| Secret      | `TURNSTILE_SECRET_KEY`            | Secret matching that Turnstile site key                                                                           |
+
+The shared repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` remain under **Settings > Secrets and variables > Actions**. `PUBLIC_DEPLOY_TARGET` is automatic; do not configure it yourself. A local `.env` is not uploaded. Run a new deployment after changing GitHub values.
+
+The contact form is optional. Configure `PUBLIC_BOOKING_EMAIL` as a normal repository variable, never as a secret. This is the only email variable: it is used for all public contact links and as both sender and recipient for the contact form. The visitor's email is used only as Reply-To. It is compiled into the site and server at build time; no separate runtime email secrets are needed.
+
+Leave both `PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` unset to use the email link alone. Supplying only one stops the workflow with the missing name. Removing both and redeploying disables the form, removes its email binding and overwrites the server Turnstile secret with an empty value. The booking email alone never enables the form.
+
+One-time service setup is still required: create a Turnstile widget allowing the relevant beta/production hostnames, and [onboard the sender domain to Cloudflare Email Service](https://developers.cloudflare.com/email-service/get-started/send-emails/). These are service activation steps, not duplicate environment-variable configuration. The deployment step creates the `CONTACT_EMAIL` binding automatically when the contact values are complete, restricted to `PUBLIC_BOOKING_EMAIL` as both recipient and sender. Rate limiting remains declared in `wrangler.jsonc`.
+
+The direct `npm run deploy` recovery commands do not synchronize GitHub secrets or generate this binding. Use GitHub Actions for normal deployments and configuration changes.
 
 The `www.skorovascamping.no` custom domain is attached to the production Worker and permanently redirects to the apex hostname while preserving the path and query string.
 
