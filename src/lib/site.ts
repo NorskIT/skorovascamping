@@ -69,6 +69,10 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		operator.address !== placeholder &&
 		(operator.privacyEmail !== placeholder || Boolean(operator.privacyPhone));
 	const isProduction = target === DeployTarget.Production;
+	if (isProduction && !operatorIsComplete)
+		throw new Error(
+			'Production requires confirmed operator name, organisation number and address'
+		);
 	const bookingPhone = optionalPhone(environment.PUBLIC_BOOKING_PHONE);
 	const turnstileSiteKey = environment.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? '';
 

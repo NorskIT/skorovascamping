@@ -80,7 +80,7 @@ The existing `.com` website remains untouched during this setup.
 
 ## SEO and analytics
 
-All public pages are registered in `src/lib/seo.ts`. Adding, removing or renaming a page must update that registry in the same change; it is the source for canonical URLs and `sitemap.xml`. A unit test fails if a static page is missing from the registry. Additional rules are documented in `AGENTS.md`.
+All public pages are registered in `src/lib/seo.ts`. Adding, removing or renaming a page must update that registry in the same change; it is the source for canonical URLs and `sitemap.xml`. A unit test fails if a static page is missing from the registry. Beta has an empty sitemap; production lists only published, indexable URLs. `lastmod` is included only when a meaningful update date is known. The owner review and launch checks are in `docs/seo-release-review.md`; additional rules are documented in `AGENTS.md`.
 
 Google Analytics is loaded through Google Tag Manager only on production and only after the public configuration is complete. Add these non-secret values under **Settings > Environments > beta / production > Environment variables** (see the full configuration table below):
 
@@ -90,13 +90,13 @@ Google Analytics is loaded through Google Tag Manager only on production and onl
 - `PUBLIC_SITE_OPERATOR_ADDRESS`
 - `PUBLIC_PRIVACY_CONTACT_PHONE`
 
-See `.env.example` for local configuration. Missing operator values render as `XXXXX`; incomplete configuration prevents GTM from loading. Beta still renders the cookie-consent interface for review but never loads GTM.
+See `.env.example` for local configuration. Missing operator values render as `XXXXX` on beta and block a production build. Beta still renders the cookie-consent interface for review but never loads GTM.
 
 ## Content and translations
 
 Landing pages live in `src/content/pages` and news articles in `src/content/news`. Content metadata is validated during the build: MDsveX pages use frontmatter, while native Svelte pages export `metadata` from a `<script module>` block. The new picture pages use native Svelte to avoid MDsveX 0.12.8's generated legacy module syntax. Core content uses a shared page ID in `nb`, `en` and `de`; routes and language links are defined centrally in `src/lib/i18n.ts`.
 
-Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta without a public review badge, remains `noindex`, is excluded from the sitemap and blocks production builds. Language alternatives can be previewed on beta; production only exposes published translations. The verification checklist is in `docs/content-review.md`.
+Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta without a public review badge, remains `noindex`, is excluded from the production sitemap and blocks production builds. Language alternatives can be previewed on beta; production only exposes published translations. The owner verification checklist is in `docs/seo-release-review.md`.
 
 The picture gallery uses localized routes: `/bilder`, `/en/pictures` and `/de/bilder`. Routing and translations are managed centrally in `src/lib/i18n.ts`; this project does not use Paraglide. The photo catalogue in `src/lib/photos.ts` provides translated captions and page selections. Photos in `src/lib/assets/content` use the existing responsive image pipeline. Original September uploads are preserved locally in the ignored `.local/image-originals` directory and are not deployed.
 

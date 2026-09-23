@@ -35,7 +35,8 @@ test('serves crawler instructions and a sitemap without review content', async (
 	const sitemapResponse = await request.get('/sitemap.xml');
 	const sitemap = await sitemapResponse.text();
 	expect(sitemapResponse.ok()).toBe(true);
-	expect(sitemap).toContain('https://skorovascamping.no/personvern');
+	expect(sitemap).toContain('<urlset');
+	expect(sitemap).not.toContain('<loc>');
 	expect(sitemap).not.toContain('/nyheter/skorovasmarsjen');
 	expect(sitemap).not.toContain('beta.skorovascamping.no');
 });

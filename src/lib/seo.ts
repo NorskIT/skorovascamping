@@ -8,7 +8,7 @@ export interface SeoDocument {
 	translationKey: string;
 	title: string;
 	description: string;
-	updatedAt: string;
+	updatedAt?: string;
 	indexable: boolean;
 	status: ContentStatus;
 	type: 'website' | 'article';
@@ -69,7 +69,7 @@ const specialCopy: Record<
 			description: `Information about cookies and analytics on ${siteName}.`
 		},
 		de: {
-			title: `Cookies | ${siteName}`,
+			title: `Cookie-Einstellungen | ${siteName}`,
 			description: `Informationen zu Cookies und Analyse auf ${siteName}.`
 		}
 	}
@@ -83,8 +83,22 @@ const specialDocuments: SeoDocument[] = (
 		locale,
 		translationKey: id,
 		...specialCopy[id][locale],
-		updatedAt: '2026-09-05',
-		indexable: true,
+		updatedAt:
+			id === 'news'
+				? newsDocuments
+						.filter(
+							(document) =>
+								document.locale === locale && document.status === 'published'
+						)
+						.map((document) => document.updatedAt)
+						.sort()
+						.at(-1)
+				: undefined,
+		indexable:
+			id !== 'news' ||
+			newsDocuments.some(
+				(document) => document.locale === locale && document.status === 'published'
+			),
 		status: 'published' as const,
 		type: 'website' as const
 	}))
@@ -133,7 +147,7 @@ export function alternateDocuments(document: SeoDocument): readonly SeoDocument[
 	return seoDocuments.filter(
 		(candidate) =>
 			candidate.translationKey === document.translationKey &&
-			(candidate.status === 'published' || !siteConfig.isProduction)
+			((candidate.status === 'published' && candidate.indexable) || !siteConfig.isProduction)
 	);
 }
 
@@ -150,7 +164,7 @@ export function createSitemapXml(): string {
 		.map(
 			(document) => `  <url>
     <loc>${escapeXml(canonicalUrl(document.path))}</loc>
-    <lastmod>${document.updatedAt}</lastmod>
+${document.updatedAt ? `    <lastmod>${document.updatedAt}</lastmod>\n` : ''}
   </url>`
 		)
 		.join('\n');

@@ -68,7 +68,12 @@
 	);
 </script>
 
-<SeoHead document={seo} {structuredData} />
+<SeoHead
+	document={seo}
+	structuredData={document.id === 'home' || document.id === 'camping'
+		? structuredData
+		: undefined}
+/>
 
 <main>
 	<section class="hero" class:camping-hero={document.id === 'camping'}>

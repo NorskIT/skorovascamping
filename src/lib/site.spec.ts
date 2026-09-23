@@ -50,11 +50,11 @@ describe('site configuration', () => {
 	});
 
 	it('does not enable analytics with placeholder operator details', () => {
-		const config = createPublicSiteConfig({
-			PUBLIC_DEPLOY_TARGET: 'production',
-			PUBLIC_GTM_CONTAINER_ID: 'GTM-THZ27K96'
-		});
-
-		expect(config.analyticsEnabled).toBe(false);
+		expect(() =>
+			createPublicSiteConfig({
+				PUBLIC_DEPLOY_TARGET: 'production',
+				PUBLIC_GTM_CONTAINER_ID: 'GTM-THZ27K96'
+			})
+		).toThrow('Production requires confirmed operator');
 	});
 });

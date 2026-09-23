@@ -32,7 +32,17 @@ describe('SEO configuration', () => {
 		expect(sitemap).toContain('<loc>https://skorovascamping.no/personvern</loc>');
 		expect(sitemap).toContain('<loc>https://skorovascamping.no/en/privacy</loc>');
 		expect(sitemap).not.toContain('/nyheter/skorovasmarsjen');
+		expect(sitemap).not.toContain('<loc>https://skorovascamping.no/nyheter</loc>');
+		expect(sitemap).not.toContain('<loc>https://skorovascamping.no/en/news</loc>');
 		expect(sitemap).not.toContain('beta.skorovascamping.no');
+	});
+
+	it('gives every indexable page distinct metadata and omits unsupported update dates', () => {
+		const pages = seoDocuments.filter((document) => document.indexable);
+		for (const field of ['path', 'title', 'description'] as const)
+			expect(new Set(pages.map((document) => document[field])).size).toBe(pages.length);
+		expect(getSeoDocument('/nyheter').indexable).toBe(false);
+		expect(createSitemapXml()).not.toContain('<lastmod>2026-09-05</lastmod>');
 	});
 
 	it('registers translated picture routes and previews reciprocal language links', () => {
