@@ -3,6 +3,9 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
 	webServer: {
 		command: 'npm run build && npm run preview',
+		// A cold image build takes about 100 seconds on the GitHub runner.
+		timeout: 180_000,
+		stdout: 'pipe',
 		url: 'http://localhost:4173',
 		env: {
 			PUBLIC_DEPLOY_TARGET: 'beta',
