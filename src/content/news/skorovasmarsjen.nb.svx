@@ -3,7 +3,7 @@ id: skorovasmarsjen-nb
 translationKey: skorovasmarsjen
 locale: nb
 kind: news
-status: review
+status: published
 slug: skorovasmarsjen
 title: Skorovasmarsjen
 description: Røde Kors Skorovas arrangerer den tradisjonsrike Skorovasmarsjen den første helga i september.

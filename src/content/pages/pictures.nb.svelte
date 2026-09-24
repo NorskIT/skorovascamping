@@ -3,7 +3,7 @@
 		id: 'pictures',
 		locale: 'nb',
 		kind: 'page',
-		status: 'review',
+		status: 'published',
 		title: 'Bilder fra Skorovas | Skorovas Camping',
 		description:
 			'Bilder av campinglivet, bygda, vatnet og friluftslivet i Skorovas gjennom året.',
@@ -11,7 +11,7 @@
 		eyebrow: 'Et glimt av livet her',
 		heroImage: 'skorovas-mountain-village',
 		heroAlt: 'Utsikt over Skorovas og fjellene',
-		updatedAt: '2026-09-23'
+		updatedAt: '2026-09-24'
 	};
 </script>
 

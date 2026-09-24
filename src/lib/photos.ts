@@ -25,9 +25,9 @@ export const photos = [
 		id: 'camping-by-the-lake',
 		group: 'camping',
 		alt: {
-			nb: 'Campingliv ved vatnet',
-			en: 'Camping by the lake',
-			de: 'Camping am See'
+			nb: 'Campingliv på Sletta, ved Lisskorovatnet',
+			en: 'Camping at Sletta, by lake Lisskorovatnet',
+			de: 'Camping auf Sletta am Lisskorovatnet'
 		}
 	},
 	{
@@ -43,9 +43,9 @@ export const photos = [
 		id: 'camping-woodland-seating',
 		group: 'camping',
 		alt: {
-			nb: 'Sitteplass ved skogkanten',
-			en: 'Seating beside the woodland',
-			de: 'Sitzplatz am Waldrand'
+			nb: 'Bobilplasser, Kleiva',
+			en: 'Motorhome pitches, Kleiva',
+			de: 'Wohnmobilstellplätze, Kleiva'
 		}
 	},
 	{
@@ -61,27 +61,27 @@ export const photos = [
 		id: 'lisskorvatnet-autumn',
 		group: 'village',
 		alt: {
-			nb: 'Høstfarger ved Lisskorvatnet',
-			en: 'Autumn colours by Lisskorvatnet',
-			de: 'Herbstfarben am Lisskorvatnet'
+			nb: 'Høstfarger ved Lisskorovatnet',
+			en: 'Autumn colours by Lisskorovatnet',
+			de: 'Herbstfarben am Lisskorovatnet'
 		}
 	},
 	{
 		id: 'lisskorvatnet-campfire',
 		group: 'village',
 		alt: {
-			nb: 'Bål ved vatnet',
-			en: 'A campfire by the lake',
-			de: 'Lagerfeuer am See'
+			nb: 'Bål ved Lisskorovatnet',
+			en: 'A campfire by lake Lisskorovatnet',
+			de: 'Lagerfeuer am Lisskorovatnet'
 		}
 	},
 	{
 		id: 'lake-evening-light',
 		group: 'village',
 		alt: {
-			nb: 'Kveldslys over vatnet',
-			en: 'Evening light over the lake',
-			de: 'Abendlicht über dem See'
+			nb: 'Kveldslys over Lisskorovatnet',
+			en: 'Evening light over lake Lisskorovatnet',
+			de: 'Abendlicht über dem Lisskorovatnet'
 		}
 	},
 	{
@@ -106,9 +106,9 @@ export const photos = [
 		id: 'hiking-gathering',
 		group: 'outdoors',
 		alt: {
-			nb: 'Turfolk samlet i fjellet',
-			en: 'Hikers gathered in the mountains',
-			de: 'Wandergruppe im Gebirge'
+			nb: 'Turfolk samlet for gruvepub',
+			en: 'Hikers gathered for a mine pub event',
+			de: 'Wanderer treffen sich zum Grubenpub'
 		}
 	},
 	{
@@ -178,18 +178,18 @@ export const photos = [
 		id: 'snow-covered-plateau',
 		group: 'outdoors',
 		alt: {
-			nb: 'Åpent, snødekt fjellandskap',
-			en: 'An open, snow-covered mountain landscape',
-			de: 'Weite, verschneite Berglandschaft'
+			nb: 'Rypene soler seg i fjellet',
+			en: 'Ptarmigans basking in the mountain sunshine',
+			de: 'Schneehühner sonnen sich im Gebirge'
 		}
 	},
 	{
 		id: 'winter-trail',
 		group: 'outdoors',
 		alt: {
-			nb: 'Spor gjennom vinterlandskapet',
-			en: 'Tracks through the winter landscape',
-			de: 'Spuren durch die Winterlandschaft'
+			nb: 'Løypekjøring i Skorovasfjellene',
+			en: 'Grooming ski trails in the Skorovas mountains',
+			de: 'Loipenpräparierung in den Bergen von Skorovas'
 		}
 	},
 	{

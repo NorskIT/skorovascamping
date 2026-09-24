@@ -121,7 +121,7 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 						{
 							title: 'Nødvendige informasjonskapsler',
 							description:
-								'Disse brukes bare til å lagre valgene dine og kan derfor ikke slås av.',
+								'Lagrer valgene dine. Cloudflare Turnstile beskytter kontaktskjemaet. Ved aktivert forhåndsklarering kan cf_clearance lagre sikkerhetsklarering så lenge Cloudflares sikkerhetsinnstillinger tillater.',
 							linkedCategory: 'necessary',
 							cookieTable: {
 								headers: {
@@ -191,7 +191,8 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 						},
 						{
 							title: 'Necessary cookies',
-							description: 'Used to remember your cookie choices and protect forms.',
+							description:
+								'Remembers your cookie choices. Cloudflare Turnstile protects the contact form. If pre-clearance is enabled, cf_clearance stores security clearance for the duration set in Cloudflare security settings.',
 							linkedCategory: 'necessary'
 						},
 						{
@@ -231,7 +232,8 @@ const consentConfig: CookieConsent.CookieConsentConfig = {
 						},
 						{
 							title: 'Notwendige Cookies',
-							description: 'Speichern die Cookie-Auswahl und schützen Formulare.',
+							description:
+								'Speichern die Cookie-Auswahl. Cloudflare Turnstile schützt das Kontaktformular. Bei aktivierter Pre-Clearance speichert cf_clearance die Sicherheitsfreigabe für die in Cloudflare eingestellte Dauer.',
 							linkedCategory: 'necessary'
 						},
 						{

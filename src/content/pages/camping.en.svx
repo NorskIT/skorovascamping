@@ -2,25 +2,26 @@
 id: camping
 locale: en
 kind: page
-status: review
+status: published
 title: Camping in Skorovas | Motorhomes, caravans and tents
 description: Pitches, prices and facilities for motorhomes, caravans and tents at Skorovas Camping in Namdalen.
 heading: Camping in Skorovas
 eyebrow: Motorhomes, caravans and tents
 heroImage: camping-motorhome-pitches
 heroAlt: Motorhomes among the birch trees at the campsite
-updatedAt: 2026-09-23
+updatedAt: 2026-09-24
 ---
 
 ## Camping pitches
 
-Four pitches with electricity are located in central Skorovas. Three are east of the community building and shop, while the fourth is beside the building's western wall. Six level pitches without electricity are available by lake Lille Skorovatn. The shop and Skjenkestova pub are a short walk away, and tents are welcome here too.
+Skorovas Camping has two areas: Kleiva and Sletta. Sletta is beside lake Lisskorovatnet. Both areas offer pitches for motorhomes and caravans with electricity and toilet access. Tents are also welcome by the lake. The shop and Skjenkestova pub are nearby.
 
 ## Prices
 
-- Motorhome or caravan: **NOK XXX per night**, including electricity and toilet access.
-- Tent: **NOK XXX per night**, including toilet access.
+- Motorhome or caravan at Kleiva: **NOK 350 per day**, including electricity and toilet access.
+- Motorhome or caravan at Sletta: **NOK 400 per day**, including electricity and toilet access.
+- Tent: **NOK 100 per day**, including toilet access.
 
 ## Facilities
 
-Water and toilets are available at Gruvekafeen inside the shop. The shower in the community building is currently unavailable. Recycling containers are located at the campsite, and a free grey-water and toilet disposal point is just under one kilometre west of the site. Skorovas Samvirkelag SA operates the campsite. Use “Book a pitch” to book through Campio. For questions about your stay, contact **booking@skorovascamping.no**.
+Water and toilets are available at Gruvekafeen inside the shop. The shower in the community building is currently unavailable. Recycling containers are located at the campsite, and a free grey-water and toilet disposal point is just under one kilometre west of the site. Skorovas samvirkelag SA operates the campsite. Use “Book a pitch” to book through Campio. For questions about your stay, contact **booking@skorovascamping.no**.

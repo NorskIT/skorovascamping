@@ -33,9 +33,20 @@ describe('SEO configuration', () => {
 		const sitemap = createSitemapXml();
 		expect(sitemap).toContain('<loc>https://skorovascamping.no/personvern</loc>');
 		expect(sitemap).toContain('<loc>https://skorovascamping.no/en/privacy</loc>');
-		expect(sitemap).not.toContain('/nyheter/skorovasmarsjen');
-		expect(sitemap).not.toContain('<loc>https://skorovascamping.no/nyheter</loc>');
-		expect(sitemap).not.toContain('<loc>https://skorovascamping.no/en/news</loc>');
+		for (const document of [...contentDocuments, ...newsDocuments]) {
+			const entry = `<loc>${canonicalUrl(document.path)}</loc>`;
+			if (document.status === 'published') expect(sitemap).toContain(entry);
+			else expect(sitemap).not.toContain(entry);
+		}
+		for (const route of localizedRoutes.filter((route) => route.id === 'news')) {
+			const hasPublishedNews = newsDocuments.some(
+				(document) => document.locale === route.locale && document.status === 'published'
+			);
+			expect(getSeoDocument(route.path).indexable).toBe(hasPublishedNews);
+			const entry = `<loc>${canonicalUrl(route.path)}</loc>`;
+			if (hasPublishedNews) expect(sitemap).toContain(entry);
+			else expect(sitemap).not.toContain(entry);
+		}
 		expect(sitemap).not.toContain('beta.skorovascamping.no');
 	});
 
@@ -43,7 +54,6 @@ describe('SEO configuration', () => {
 		const pages = seoDocuments.filter((document) => document.indexable);
 		for (const field of ['path', 'title', 'description'] as const)
 			expect(new Set(pages.map((document) => document[field])).size).toBe(pages.length);
-		expect(getSeoDocument('/nyheter').indexable).toBe(false);
 		expect(createSitemapXml()).not.toContain('<lastmod>2026-09-05</lastmod>');
 	});
 
@@ -51,11 +61,12 @@ describe('SEO configuration', () => {
 		const paths = ['/bilder', '/en/pictures', '/de/bilder'];
 		for (const path of paths) {
 			const document = getSeoDocument(path);
-			expect(document.status).toBe('review');
+			expect(document.status).toBe(
+				contentDocuments.find((page) => page.path === path)?.status
+			);
 			expect(alternateDocuments(document).map((alternate) => alternate.path)).toEqual(
 				expect.arrayContaining(paths)
 			);
-			expect(createSitemapXml()).not.toContain(`<loc>${canonicalUrl(path)}</loc>`);
 		}
 		expect(new Set(paths.map((path) => getSeoDocument(path).title)).size).toBe(3);
 		expect(new Set(paths.map((path) => getSeoDocument(path).description)).size).toBe(3);
@@ -72,13 +83,10 @@ describe('SEO configuration', () => {
 			);
 			for (const document of translations) {
 				const seo = getSeoDocument(document.path);
-				expect(seo.status).toBe('review');
-				expect(seo.indexable).toBe(false);
+				expect(seo.status).toBe(document.status);
+				expect(seo.indexable).toBe(document.status === 'published');
 				expect(alternateDocuments(seo).map((alternate) => alternate.path)).toEqual(
 					expect.arrayContaining(translations.map((translation) => translation.path))
-				);
-				expect(createSitemapXml()).not.toContain(
-					`<loc>${canonicalUrl(document.path)}</loc>`
 				);
 			}
 		}

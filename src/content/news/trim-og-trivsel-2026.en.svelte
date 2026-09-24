@@ -4,7 +4,7 @@
 		translationKey: 'trim-og-trivsel-2026',
 		locale: 'en',
 		kind: 'news',
-		status: 'review',
+		status: 'published',
 		slug: 'trim-og-trivsel-2026',
 		title: 'Trim og Trivsel 2026 | Hiking in Skorovas',
 		description:

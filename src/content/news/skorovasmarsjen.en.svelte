@@ -4,7 +4,7 @@
 		translationKey: 'skorovasmarsjen',
 		locale: 'en',
 		kind: 'news',
-		status: 'review',
+		status: 'published',
 		slug: 'skorovasmarsjen',
 		title: 'Skorovasmarsjen | Annual walk in Skorovas',
 		description:

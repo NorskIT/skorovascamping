@@ -3,7 +3,7 @@
 		id: 'pictures',
 		locale: 'de',
 		kind: 'page',
-		status: 'review',
+		status: 'published',
 		title: 'Bilder aus Skorovas | Skorovas Camping',
 		description:
 			'Bilder vom Camping, dem Dorf, dem See und dem Leben in der Natur rund um Skorovas zu jeder Jahreszeit.',
@@ -11,7 +11,7 @@
 		eyebrow: 'Ein Einblick in das Leben hier',
 		heroImage: 'skorovas-mountain-village',
 		heroAlt: 'Skorovas und die umliegenden Berge',
-		updatedAt: '2026-09-23'
+		updatedAt: '2026-09-24'
 	};
 </script>
 

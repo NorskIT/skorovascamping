@@ -18,6 +18,7 @@ interface ContactPayload {
 interface TurnstileResult {
 	success: boolean;
 	action?: string;
+	hostname?: string;
 }
 
 const text = (value: unknown, max: number) =>
@@ -38,6 +39,9 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		return json({ ok: false, error: 'invalid_request' }, { status: 400 });
 	}
 
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw))
+		return json({ ok: false, error: 'invalid_request' }, { status: 400 });
+
 	if (text(raw.company, 100)) return json({ ok: true });
 
 	const payload = {
@@ -46,7 +50,7 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		phone: text(raw.phone, 40),
 		message: text(raw.message, 2_000),
 		locale: ['nb', 'en', 'de'].includes(text(raw.locale, 2)) ? text(raw.locale, 2) : 'nb',
-		turnstileToken: text(raw.turnstileToken, 2_048)
+		turnstileToken: raw.turnstileToken
 	};
 
 	if (
@@ -58,8 +62,16 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		return json({ ok: false, error: 'validation' }, { status: 400 });
 	}
 
+	if (
+		typeof payload.turnstileToken !== 'string' ||
+		!payload.turnstileToken.length ||
+		payload.turnstileToken.length > 2048
+	) {
+		return json({ ok: false, error: 'verification' }, { status: 400 });
+	}
+
 	const env = platform?.env;
-	if (!env?.TURNSTILE_SECRET_KEY || !env.CONTACT_EMAIL) {
+	if (!env?.TURNSTILE_SECRET || !env.CONTACT_EMAIL) {
 		return json({ ok: false, error: 'unavailable' }, { status: 503 });
 	}
 
@@ -69,17 +81,37 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		if (!rateLimit.success) return json({ ok: false, error: 'rate_limited' }, { status: 429 });
 	}
 
-	const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-		method: 'POST',
-		headers: { 'content-type': 'application/json' },
-		body: JSON.stringify({
-			secret: env.TURNSTILE_SECRET_KEY,
-			response: payload.turnstileToken,
-			remoteip: clientAddress
-		})
-	});
-	const turnstile = (await verification.json()) as TurnstileResult;
-	if (!turnstile.success) return json({ ok: false, error: 'verification' }, { status: 400 });
+	const expectedHostnames: Record<string, string[]> = {
+		production: ['skorovascamping.no', 'www.skorovascamping.no'],
+		beta: ['beta.skorovascamping.no'],
+		local: ['localhost', '127.0.0.1']
+	};
+	try {
+		const verification = await fetch(
+			'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+			{
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				signal: AbortSignal.timeout(10_000),
+				body: JSON.stringify({
+					secret: env.TURNSTILE_SECRET,
+					response: payload.turnstileToken,
+					remoteip: clientAddress
+				})
+			}
+		);
+		if (!verification.ok) throw new Error('Verification unavailable');
+		const result = (await verification.json()) as TurnstileResult | null;
+		if (
+			result?.success !== true ||
+			result.action !== 'contact' ||
+			!expectedHostnames[siteConfig.target]?.includes(result.hostname ?? '')
+		) {
+			return json({ ok: false, error: 'verification' }, { status: 400 });
+		}
+	} catch {
+		return json({ ok: false, error: 'verification' }, { status: 400 });
+	}
 
 	const replyTo = payload.email || undefined;
 	await env.CONTACT_EMAIL.send({

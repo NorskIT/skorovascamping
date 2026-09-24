@@ -2,7 +2,7 @@
 id: experiences
 locale: de
 kind: page
-status: review
+status: published
 title: Erlebnisse und Aktivitäten in Skorovas
 description: Wandern, Angeln, Winterlandschaft, Bergbaugeschichte und örtliche Veranstaltungen rund um Skorovas erleben.
 heading: Erlebnisse in Skorovas

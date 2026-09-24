@@ -3,7 +3,7 @@ id: trim-og-trivsel-2026-nb
 translationKey: trim-og-trivsel-2026
 locale: nb
 kind: news
-status: review
+status: published
 slug: trim-og-trivsel-2026
 title: Trim og Trivsel 2026 i Skorovas
 description: Fra juni til oktober kan du besøke 26 Trim og Trivsel-poster i Skorovasområdet med Trimpoeng-appen.

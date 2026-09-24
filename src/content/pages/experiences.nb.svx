@@ -2,7 +2,7 @@
 id: experiences
 locale: nb
 kind: page
-status: review
+status: published
 title: Opplevelser og aktiviteter i Skorovas
 description: Opplev fjellturer, fiske, vinterlandskap, lokal historie og arrangementer rundt Skorovas i Namdalen.
 heading: Opplevelser i Skorovas

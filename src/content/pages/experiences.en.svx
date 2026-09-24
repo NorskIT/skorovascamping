@@ -2,7 +2,7 @@
 id: experiences
 locale: en
 kind: page
-status: review
+status: published
 title: Experiences and activities in Skorovas
 description: Discover hiking, fishing, winter landscapes, mining history and local events around Skorovas in Namdalen.
 heading: Experiences in Skorovas

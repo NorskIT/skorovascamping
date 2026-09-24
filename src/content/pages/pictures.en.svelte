@@ -3,7 +3,7 @@
 		id: 'pictures',
 		locale: 'en',
 		kind: 'page',
-		status: 'review',
+		status: 'published',
 		title: 'Pictures of Skorovas | Skorovas Camping',
 		description:
 			'Pictures of camping, the village, the lake and outdoor life in Skorovas throughout the year.',
@@ -11,7 +11,7 @@
 		eyebrow: 'A glimpse of life here',
 		heroImage: 'skorovas-mountain-village',
 		heroAlt: 'Skorovas and the surrounding mountains',
-		updatedAt: '2026-09-23'
+		updatedAt: '2026-09-24'
 	};
 </script>
 

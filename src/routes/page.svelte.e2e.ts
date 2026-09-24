@@ -29,7 +29,7 @@ test('serves localized routes with the correct document language', async ({ page
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Praktische Informationen');
 });
 
-test('shows business contact fields in every language without publishing placeholder schema data', async ({
+test('shows confirmed business contact fields and organization data in every language', async ({
 	page
 }) => {
 	for (const [path, heading, labels] of [
@@ -52,7 +52,11 @@ test('shows business contact fields in every language without publishing placeho
 		await page.goto(path);
 		const details = page.getByRole('region', { name: heading });
 		await expect(details.locator('dt')).toHaveText(labels);
-		await expect(details.locator('dd')).toHaveText(['XXX', 'XXX', 'XXX']);
+		await expect(details.locator('dd')).toHaveText([
+			'Skorovas samvirkelag SA',
+			'947 534 777',
+			'Kleiva 2, 7893 Skorovas'
+		]);
 		await expect(
 			page.getByRole('link', { name: /booking@skorovascamping.no/ }).first()
 		).toHaveAttribute('href', 'mailto:booking@skorovascamping.no');
@@ -62,6 +66,9 @@ test('shows business contact fields in every language without publishing placeho
 		);
 		expect(data['@type']).toBe('Organization');
 		expect(data.email).toBe('booking@skorovascamping.no');
+		expect(data.legalName).toBe('Skorovas samvirkelag SA');
+		expect(data.identifier.value).toBe('947 534 777');
+		expect(data.address).toBe('Kleiva 2, 7893 Skorovas');
 		expect(JSON.stringify(data)).not.toContain('XXX');
 	}
 });

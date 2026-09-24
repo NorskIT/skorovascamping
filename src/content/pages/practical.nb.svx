@@ -2,7 +2,7 @@
 id: practical
 locale: nb
 kind: page
-status: review
+status: published
 title: Praktisk informasjon | Skorovas Camping
 description: Finn informasjon om butikk, mat, toalett, vann, tømmestasjon og andre tilbud ved Skorovas Camping.
 heading: Praktisk informasjon

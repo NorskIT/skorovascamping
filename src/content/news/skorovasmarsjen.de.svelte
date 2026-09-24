@@ -4,7 +4,7 @@
 		translationKey: 'skorovasmarsjen',
 		locale: 'de',
 		kind: 'news',
-		status: 'review',
+		status: 'published',
 		slug: 'skorovasmarsjen',
 		title: 'Skorovasmarsjen | Jährliche Wanderung in Skorovas',
 		description:

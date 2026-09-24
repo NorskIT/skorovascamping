@@ -2,10 +2,54 @@
 	import { trackLead, trackContact, ContactMethod } from '$lib/analytics/tracking';
 	import { getMessages, type Locale } from '$lib/i18n';
 	import { siteConfig } from '$lib/site';
+	import { loadTurnstile, type Turnstile } from '$lib/turnstile';
 
 	let { locale }: { locale: Locale } = $props();
 	const text = $derived(getMessages(locale));
-	let state = $state<'idle' | 'sending' | 'success' | 'error'>('idle');
+	let submissionState = $state<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+	let container = $state<HTMLDivElement>();
+	let token = $state('');
+	let widget: string | undefined;
+	let turnstile: Turnstile | undefined;
+	$effect(() => {
+		const element = container;
+		const language = locale;
+		if (!element) return;
+		let disposed = false;
+		token = '';
+		loadTurnstile()
+			.then((api) => {
+				if (disposed) return;
+				turnstile = api;
+				widget = api.render(element, {
+					sitekey: siteConfig.turnstileSiteKey,
+					action: 'contact',
+					theme: 'light',
+					language,
+					callback: (value) => {
+						if (!disposed) token = value;
+					},
+					'expired-callback': () => {
+						if (!disposed) token = '';
+					},
+					'error-callback': () => {
+						if (!disposed) {
+							token = '';
+							submissionState = 'error';
+						}
+					}
+				});
+			})
+			.catch(() => {
+				if (!disposed) submissionState = 'error';
+			});
+		return () => {
+			disposed = true;
+			if (widget !== undefined) turnstile?.remove(widget);
+			widget = undefined;
+		};
+	});
 
 	const feedback = {
 		nb: {
@@ -24,7 +68,8 @@
 
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
-		state = 'sending';
+		if (!token || submissionState === 'sending') return;
+		submissionState = 'sending';
 		const form = event.currentTarget as HTMLFormElement;
 		const data = new FormData(form);
 		try {
@@ -38,25 +83,22 @@
 					message: data.get('message'),
 					company: data.get('company'),
 					locale,
-					turnstileToken: data.get('cf-turnstile-response')
+					turnstileToken: token
 				})
 			});
-			state = response.ok ? 'success' : 'error';
+			submissionState = response.ok ? 'success' : 'error';
 			if (response.ok) {
 				form.reset();
 				trackLead();
 			}
 		} catch {
-			state = 'error';
+			submissionState = 'error';
+		} finally {
+			token = '';
+			if (widget !== undefined) turnstile?.reset(widget);
 		}
 	}
 </script>
-
-<svelte:head>
-	{#if siteConfig.contactFormEnabled}
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-	{/if}
-</svelte:head>
 
 {#if siteConfig.contactFormEnabled}
 	<form onsubmit={submit}>
@@ -102,17 +144,14 @@
 			<label for="contact-company">Company</label>
 			<input id="contact-company" name="company" tabindex="-1" autocomplete="off" />
 		</div>
-		<div
-			class="cf-turnstile"
-			data-sitekey={siteConfig.turnstileSiteKey}
-			data-theme="light"
-		></div>
+		<div bind:this={container}></div>
 		<p class="privacy">{text.privacyNotice}</p>
-		<button type="submit" disabled={state === 'sending'}>{text.send}</button>
+		<button type="submit" disabled={submissionState === 'sending' || !token}>{text.send}</button
+		>
 		<p class="feedback" aria-live="polite">
-			{state === 'success'
+			{submissionState === 'success'
 				? feedback[locale].success
-				: state === 'error'
+				: submissionState === 'error'
 					? feedback[locale].error
 					: ''}
 		</p>

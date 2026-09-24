@@ -33,6 +33,8 @@ npm run test:e2e
 
 `npm run preview` serves the production build through the Cloudflare Workers runtime. `npm run deploy:beta` and `npm run deploy` perform direct beta and production deployments for recovery or initial setup; normal deployments come from GitHub Actions.
 
+Use `npm run gen` to regenerate Worker types. It excludes local `.env` values from runtime binding inference, keeping type checks consistent between local development and CI. Public site values are compiled by Vite; the optional contact bindings are declared separately in `src/app.d.ts`.
+
 ## Delivery workflow
 
 1. Create a feature branch and open a pull request against `main`.
@@ -45,6 +47,8 @@ npm run test:e2e
 Beta can also be deployed manually from **Actions > Deploy Beta > Run workflow**, using the same branch selector. The manual workflow buttons are available after the workflow files have been merged into the default branch.
 
 The deployment workflow sets `PUBLIC_DEPLOY_TARGET` at build time. Production emits indexable metadata and crawler instructions; beta emits `noindex` metadata and an `X-Robots-Tag` header. Do not set this variable manually in GitHub.
+
+Playwright runs against an isolated beta build with explicit operator test values. The deployment workflow builds again for the selected target after end-to-end tests, so the test build is never deployed as production.
 
 Configure a GitHub branch rule for `main` with:
 
@@ -96,7 +100,7 @@ See `.env.example` for local configuration. Missing operator values render as `X
 
 Landing pages live in `src/content/pages` and news articles in `src/content/news`. Content metadata is validated during the build: MDsveX pages use frontmatter, while native Svelte pages export `metadata` from a `<script module>` block. The new picture pages use native Svelte to avoid MDsveX 0.12.8's generated legacy module syntax. Core content uses a shared page ID in `nb`, `en` and `de`; routes and language links are defined centrally in `src/lib/i18n.ts`.
 
-Use `status: review` for drafts, imports and facts that may have changed. Review content appears on beta without a public review badge, remains `noindex`, is excluded from the production sitemap and blocks production builds. Language alternatives can be previewed on beta; production only exposes published translations. The owner verification checklist is in `docs/seo-release-review.md`.
+Use `status: published` for drafts, imports and facts that may have changed. Review content appears on beta without a public review badge, remains `noindex`, is excluded from the production sitemap and blocks production builds. Language alternatives can be previewed on beta; production only exposes published translations. The owner verification checklist is in `docs/seo-release-review.md`.
 
 The picture gallery uses localized routes: `/bilder`, `/en/pictures` and `/de/bilder`. Routing and translations are managed centrally in `src/lib/i18n.ts`; this project does not use Paraglide. The photo catalogue in `src/lib/photos.ts` provides translated captions and page selections. Photos in `src/lib/assets/content` use the existing responsive image pipeline. Original September uploads are preserved locally in the ignored `.local/image-originals` directory and are not deployed.
 
@@ -104,7 +108,7 @@ The picture gallery uses localized routes: `/bilder`, `/en/pictures` and `/de/bi
 
 Booking buttons link to Skorovas Camping on Campio in the visitor's language. The URL is centralized in `src/lib/booking.ts`; this integration needs no API credentials. The link loads no Campio scripts or cookies on this website. Booking clicks emit `begin_booking` through the existing production analytics configuration.
 
-The default contact address is `booking@skorovascamping.no`; `PUBLIC_BOOKING_EMAIL` can override it. Leave `PUBLIC_BOOKING_PHONE` empty until an actual phone number has been confirmed. No default phone number is provided. Prices remain `XXX` until approved.
+The default contact address is `booking@skorovascamping.no`; `PUBLIC_BOOKING_EMAIL` can override it. Leave `PUBLIC_BOOKING_PHONE` empty until an actual phone number has been confirmed. No default phone number is provided. Owner-confirmed daily prices are NOK 350 at Kleiva and NOK 400 at Sletta for a motorhome/caravan, including electricity and toilet access, and NOK 100 for a tent including toilet access. Public text does not state pitch counts. All three language versions of the camping page must stay consistent when prices change.
 
 ## Contact form
 
@@ -116,19 +120,19 @@ Put shared values under **Settings > Secrets and variables > Actions**. Use **Se
 | ----------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | Variable    | `PUBLIC_BOOKING_EMAIL`            | Single email address for booking, privacy, and contact sender/recipient; defaults to `booking@skorovascamping.no` |
 | Variable    | `PUBLIC_BOOKING_PHONE`            | Optional; leave unset until a real number is confirmed                                                            |
-| Variable    | `PUBLIC_SITE_OPERATOR_NAME`       | Legal business name                                                                                               |
-| Variable    | `PUBLIC_SITE_OPERATOR_ORG_NUMBER` | Organisation number                                                                                               |
-| Variable    | `PUBLIC_SITE_OPERATOR_ADDRESS`    | Business address                                                                                                  |
+| Variable    | `PUBLIC_SITE_OPERATOR_NAME`       | `Skorovas samvirkelag SA`                                                                                         |
+| Variable    | `PUBLIC_SITE_OPERATOR_ORG_NUMBER` | `947 534 777`                                                                                                     |
+| Variable    | `PUBLIC_SITE_OPERATOR_ADDRESS`    | `Kleiva 2, 7893 Skorovas`                                                                                         |
 | Variable    | `PUBLIC_PRIVACY_CONTACT_PHONE`    | Optional; confirmed number only                                                                                   |
-| Variable    | `PUBLIC_GTM_CONTAINER_ID`         | Optional; production GTM container ID. Leave unset for beta                                                       |
-| Variable    | `PUBLIC_TURNSTILE_SITE_KEY`       | Required to enable the contact form                                                                               |
-| Secret      | `TURNSTILE_SECRET_KEY`            | Secret matching that Turnstile site key                                                                           |
+| Secret      | `PUBLIC_GTM_CONTAINER_ID`         | Optional; production GTM container ID. Leave unset for beta                                                       |
+| Secret      | `TURNSTILE_SITEKEY`               | Required to enable the contact form                                                                               |
+| Secret      | `TURNSTILE_SECRET`                | Secret matching that Turnstile site key                                                                           |
 
 The shared repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` remain under **Settings > Secrets and variables > Actions**. `PUBLIC_DEPLOY_TARGET` is automatic; do not configure it yourself. A local `.env` is not uploaded. Run a new deployment after changing GitHub values.
 
 The contact form is optional. Configure `PUBLIC_BOOKING_EMAIL` as a normal repository variable, never as a secret. This is the only email variable: it is used for all public contact links and as both sender and recipient for the contact form. The visitor's email is used only as Reply-To. It is compiled into the site and server at build time; no separate runtime email secrets are needed.
 
-Leave both `PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` unset to use the email link alone. Supplying only one stops the workflow with the missing name. Removing both and redeploying disables the form, removes its email binding and overwrites the server Turnstile secret with an empty value. The booking email alone never enables the form.
+Leave both `TURNSTILE_SITEKEY` and `TURNSTILE_SECRET` unset to use the email link alone. Supplying only one stops the workflow with the missing name. Removing both and redeploying disables the form, removes its email binding and overwrites the server Turnstile secret with an empty value. The booking email alone never enables the form.
 
 One-time service setup is still required: create a Turnstile widget allowing the relevant beta/production hostnames, and [onboard the sender domain to Cloudflare Email Service](https://developers.cloudflare.com/email-service/get-started/send-emails/). These are service activation steps, not duplicate environment-variable configuration. The deployment step creates the `CONTACT_EMAIL` binding automatically when the contact values are complete, restricted to `PUBLIC_BOOKING_EMAIL` as both recipient and sender. Rate limiting remains declared in `wrangler.jsonc`.
 
@@ -139,3 +143,11 @@ The `www.skorovascamping.no` custom domain is attached to the production Worker 
 ## Rollback
 
 Cloudflare retains Worker versions. If a production deployment fails after merge, open the Worker in Cloudflare, select **Deployments**, and roll back to the last verified version. Follow up with a Git revert so `main` again represents production.
+
+### Turnstile verification
+
+The existing production widget is `0x4AAAAAAFCRkY2jbRrrq8SP`. The `production` GitHub environment supplies `TURNSTILE_SITEKEY` (mapped to public build variable `PUBLIC_TURNSTILE_SITE_KEY`) and `TURNSTILE_SECRET` (uploaded as a private Worker secret). `PUBLIC_GTM_CONTAINER_ID` is read from GitHub Secrets. No secret value is needed in source control.
+
+The contact form uses action `contact`, explicit widget rendering and a fresh token after every submission. The server checks Siteverify success, action and exact frontend hostname. Production accepts only `skorovascamping.no` and `www.skorovascamping.no`; beta accepts only `beta.skorovascamping.no`; local accepts only `localhost` and `127.0.0.1`. Verification errors fail closed before email delivery.
+
+Local/browser tests use a test sitekey and mocked verification; they do not prove the production widget, secret or email delivery works. After deployment, verify a real fresh token sends one enquiry and replaying that token is rejected. Confirm widget hostnames and any `cf_clearance` lifetime in Cloudflare. No widget settings have been changed by this integration.

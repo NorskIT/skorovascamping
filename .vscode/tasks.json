@@ -4,9 +4,9 @@
 		{
 			"label": "SvelteKit: dev",
 			"type": "shell",
-			"command": "if [ -s \"$HOME/.nvm/nvm.sh\" ]; then . \"$HOME/.nvm/nvm.sh\" && nvm use 24; fi; npm run dev -- --host 127.0.0.1",
+			"command": "if [ -s \"$HOME/.nvm/nvm.sh\" ]; then . \"$HOME/.nvm/nvm.sh\" && nvm use 24; fi; exec node ./node_modules/vite/bin/vite.js dev --host 127.0.0.1",
 			"windows": {
-				"command": "$nodeCommand = Get-Command node -ErrorAction SilentlyContinue; $nodeDir = if ($nodeCommand) { Split-Path $nodeCommand.Source } else { Join-Path $env:LOCALAPPDATA 'Programs\\node-v24.18.0-win-x64' }; $env:Path = \"$nodeDir;$env:Path\"; & (Join-Path $nodeDir 'npm.cmd') run dev -- --host 127.0.0.1"
+				"command": "$nodeCommand = Get-Command node -ErrorAction SilentlyContinue; $nodeDir = if ($nodeCommand) { Split-Path $nodeCommand.Source } else { Join-Path $env:LOCALAPPDATA 'Programs\\node-v24.18.0-win-x64' }; $env:Path = \"$nodeDir;$env:Path\"; & (Join-Path $nodeDir 'node.exe') ./node_modules/vite/bin/vite.js dev --host 127.0.0.1"
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -28,6 +28,20 @@
 				"panel": "dedicated",
 				"clear": true
 			}
+		},
+		{
+			"label": "SvelteKit: stop dev",
+			"type": "shell",
+			"command": "echo ${input:stopSvelteKitDev}",
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "stopSvelteKitDev",
+			"type": "command",
+			"command": "workbench.action.tasks.terminate",
+			"args": "SvelteKit: dev"
 		}
 	]
 }

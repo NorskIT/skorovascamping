@@ -37,7 +37,7 @@ declare global {
 		interface Platform {
 			env: Env & {
 				CONTACT_EMAIL?: ContactEmailBinding;
-				TURNSTILE_SECRET_KEY?: string;
+				TURNSTILE_SECRET?: string;
 				CONTACT_RATE_LIMITER?: RateLimit;
 			};
 			ctx: ExecutionContext;

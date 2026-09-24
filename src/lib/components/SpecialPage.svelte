@@ -36,11 +36,11 @@
 				'Behandlingsansvarlig',
 				`${siteConfig.operator.name}, organisasjonsnummer ${siteConfig.operator.organisationNumber}, er behandlingsansvarlig. Adresse: ${siteConfig.operator.address}. Kontakt: ${privacyContact}.`,
 				'Kontaktskjema og analyse',
-				'Vi bruker opplysningene du sender bare for å svare på henvendelsen. Skjemaet beskyttes av Cloudflare Turnstile. Google Analytics brukes bare etter samtykke, og vi sender aldri innhold fra skjemaet til Analytics. Google Calendar lastes først etter eget samtykke til eksternt innhold.'
+				'Vi bruker opplysningene du sender bare for å svare på henvendelsen. Skjemaet beskyttes av Cloudflare Turnstile, som behandler IP-adresse og tekniske nettleseropplysninger for å oppdage automatisert misbruk. Google Analytics brukes bare etter samtykke, og vi sender aldri innhold fra skjemaet til Analytics. Google Calendar lastes først etter eget samtykke til eksternt innhold.'
 			],
 			cookies: [
 				'Våre informasjonskapsler',
-				'Vi bruker en nødvendig informasjonskapsel for å lagre samtykkevalget i 180 dager. Google Analytics (_ga og _ga_*) kan lagres i opptil to år hvis du godtar analyse.',
+				'Turnstile bruker en engangskode som er gyldig i fem minutter. Dersom forhåndsklarering er aktivert hos Cloudflare, brukes også sikkerhetskapselen cf_clearance med varighet bestemt av Cloudflares sikkerhetsinnstillinger. Vi bruker en nødvendig informasjonskapsel for å lagre samtykkevalget i 180 dager. Google Analytics (_ga og _ga_*) kan lagres i opptil to år hvis du godtar analyse.',
 				'Eksternt innhold',
 				'Aktivitetskalenderen leveres av Google og lastes bare hvis du godtar kategorien eksternt innhold. Du kan endre alle valg når som helst.'
 			]
@@ -50,11 +50,11 @@
 				'Data controller',
 				`${siteConfig.operator.name}, organisation number ${siteConfig.operator.organisationNumber}, is the data controller. Address: ${siteConfig.operator.address}. Contact: ${privacyContact}.`,
 				'Contact form and analytics',
-				'We use submitted details only to answer your enquiry. Cloudflare Turnstile protects the form. Google Analytics runs only after consent, and form content is never sent to Analytics. Google Calendar loads only after separate consent to external content.'
+				'We use submitted details only to answer your enquiry. Cloudflare Turnstile protects the form by processing IP addresses and technical browser information to detect automated abuse. Google Analytics runs only after consent, and form content is never sent to Analytics. Google Calendar loads only after separate consent to external content.'
 			],
 			cookies: [
 				'Our cookies',
-				'We use one necessary cookie to store your consent choice for 180 days. Google Analytics cookies (_ga and _ga_*) may be stored for up to two years if you consent to analytics.',
+				'Turnstile uses a single-use token valid for five minutes. If Cloudflare pre-clearance is enabled, the security cookie cf_clearance is also used, with a lifetime determined by the Cloudflare security settings. We use one necessary cookie to store your consent choice for 180 days. Google Analytics cookies (_ga and _ga_*) may be stored for up to two years if you consent to analytics.',
 				'External content',
 				'The activity calendar is provided by Google and loads only after consent to external content. You can change your choices at any time.'
 			]
@@ -64,11 +64,11 @@
 				'Verantwortlicher',
 				`${siteConfig.operator.name}, Organisationsnummer ${siteConfig.operator.organisationNumber}, ist verantwortlich. Adresse: ${siteConfig.operator.address}. Kontakt: ${privacyContact}.`,
 				'Kontaktformular und Analyse',
-				'Wir verwenden Ihre Angaben nur zur Beantwortung Ihrer Anfrage. Cloudflare Turnstile schützt das Formular. Google Analytics wird nur nach Einwilligung verwendet; Formulardaten werden nie an Analytics gesendet. Google Calendar wird erst nach gesonderter Einwilligung geladen.'
+				'Wir verwenden Ihre Angaben nur zur Beantwortung Ihrer Anfrage. Cloudflare Turnstile schützt das Formular und verarbeitet dazu IP-Adressen und technische Browserinformationen zur Erkennung automatisierten Missbrauchs. Google Analytics wird nur nach Einwilligung verwendet; Formulardaten werden nie an Analytics gesendet. Google Calendar wird erst nach gesonderter Einwilligung geladen.'
 			],
 			cookies: [
 				'Unsere Cookies',
-				'Wir verwenden ein notwendiges Cookie, das Ihre Einwilligung 180 Tage speichert. Google-Analytics-Cookies (_ga und _ga_*) können nach Einwilligung bis zu zwei Jahre gespeichert werden.',
+				'Turnstile verwendet einen einmaligen, fünf Minuten gültigen Prüfcode. Wenn Cloudflare Pre-Clearance aktiviert ist, wird auch das Sicherheitscookie cf_clearance verwendet; seine Gültigkeit richtet sich nach den Cloudflare-Sicherheitseinstellungen. Wir verwenden ein notwendiges Cookie, das Ihre Einwilligung 180 Tage speichert. Google-Analytics-Cookies (_ga und _ga_*) können nach Einwilligung bis zu zwei Jahre gespeichert werden.',
 				'Externe Inhalte',
 				'Der Veranstaltungskalender wird von Google bereitgestellt und erst nach Einwilligung geladen. Sie können Ihre Auswahl jederzeit ändern.'
 			]

@@ -2,7 +2,7 @@
 id: practical
 locale: en
 kind: page
-status: review
+status: published
 title: Practical information | Skorovas Camping
 description: Information about the shop, café, toilets, water, disposal point and other facilities near Skorovas Camping.
 heading: Practical information

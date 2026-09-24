@@ -77,7 +77,7 @@ test('gallery browses in order with controls, thumbnails and arrow keys', async 
 	await opener.click();
 	const dialog = page.getByRole('dialog');
 	const photo = dialog.locator('.stage img');
-	await expect(photo).toHaveAttribute('alt', 'Campingliv ved vatnet');
+	await expect(photo).toHaveAttribute('alt', 'Campingliv på Sletta, ved Lisskorovatnet');
 	await dialog.getByRole('button', { name: 'Neste bilde' }).click();
 	await expect(photo).toHaveAttribute('alt', 'Bobiler mellom bjørketrærne');
 	await expect(dialog.locator('.thumbnail[aria-pressed="true"]')).toHaveAttribute(
@@ -85,7 +85,7 @@ test('gallery browses in order with controls, thumbnails and arrow keys', async 
 		'2: Bobiler mellom bjørketrærne'
 	);
 	await page.keyboard.press('ArrowLeft');
-	await expect(photo).toHaveAttribute('alt', 'Campingliv ved vatnet');
+	await expect(photo).toHaveAttribute('alt', 'Campingliv på Sletta, ved Lisskorovatnet');
 	await page.keyboard.press('ArrowLeft');
 	await expect(photo).toHaveAttribute(
 		'alt',
@@ -96,8 +96,8 @@ test('gallery browses in order with controls, thumbnails and arrow keys', async 
 		'aria-label',
 		/20:/
 	);
-	await dialog.getByRole('button', { name: '3: Sitteplass ved skogkanten' }).click();
-	await expect(photo).toHaveAttribute('alt', 'Sitteplass ved skogkanten');
+	await dialog.getByRole('button', { name: '3: Bobilplasser, Kleiva' }).click();
+	await expect(photo).toHaveAttribute('alt', 'Bobilplasser, Kleiva');
 	await dialog.getByRole('button', { name: 'Forrige bilde' }).click();
 	await expect(photo).toHaveAttribute('alt', 'Bobiler mellom bjørketrærne');
 	await dialog.getByRole('button', { name: 'Lukk bildet' }).click();
@@ -136,10 +136,31 @@ test('news photos retain their proportions and the back link clears the header',
 test('booking uses localized Campio links while contact and prices use confirmed content', async ({
 	page
 }) => {
-	for (const [path, prefix] of [
-		['/camping', '/nb'],
-		['/en/camping', ''],
-		['/de/camping', '/de']
+	for (const { path, prefix, prices, electricity, toilets, tent } of [
+		{
+			path: '/camping',
+			prefix: '/nb',
+			prices: ['350 kroner per døgn', '400 kroner per døgn', '100 kroner per døgn'],
+			electricity: 'strøm',
+			toilets: 'toalett',
+			tent: 'Telt'
+		},
+		{
+			path: '/en/camping',
+			prefix: '',
+			prices: ['NOK 350 per day', 'NOK 400 per day', 'NOK 100 per day'],
+			electricity: 'electricity',
+			toilets: 'toilet access',
+			tent: 'Tent'
+		},
+		{
+			path: '/de/camping',
+			prefix: '/de',
+			prices: ['350 NOK pro Tag', '400 NOK pro Tag', '100 NOK pro Tag'],
+			electricity: 'Strom',
+			toilets: 'Toilettenzugang',
+			tent: 'Zelt'
+		}
 	]) {
 		await page.goto(path);
 		const book = page.locator('main a.button').first();
@@ -148,8 +169,15 @@ test('booking uses localized Campio links while contact and prices use confirmed
 			`https://campio.no${prefix}/campsite/skorovas-camping-6464381175533198`
 		);
 		await expect(book).not.toHaveAttribute('target', '_blank');
-		await expect(page.locator('main .prose')).toContainText('XXX');
-		await expect(page.locator('main .prose')).not.toContainText(/300|100|48 12 91 15/);
+		const rows = page.locator('main .prose').getByRole('listitem');
+		for (const [index, area] of ['Kleiva', 'Sletta', tent].entries()) {
+			const row = rows.filter({ hasText: area });
+			await expect(row.locator('strong')).toHaveText(prices[index]);
+			await expect(row).toContainText(toilets);
+			if (area !== tent) await expect(row).toContainText(electricity);
+			else await expect(row).not.toContainText(electricity);
+		}
+		await expect(page.locator('main .prose')).not.toContainText(/XXX|48 12 91 15/);
 		await expect(page.locator('.review')).toHaveCount(0);
 	}
 	await page.goto('/kontakt');
