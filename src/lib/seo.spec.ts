@@ -54,7 +54,16 @@ describe('SEO configuration', () => {
 		const pages = seoDocuments.filter((document) => document.indexable);
 		for (const field of ['path', 'title', 'description'] as const)
 			expect(new Set(pages.map((document) => document[field])).size).toBe(pages.length);
-		expect(createSitemapXml()).not.toContain('<lastmod>2026-09-05</lastmod>');
+		const entries = createSitemapXml().match(/<url>[\s\S]*?<\/url>/g) ?? [];
+		for (const document of pages) {
+			const entry = entries.find((value) =>
+				value.includes(`<loc>${canonicalUrl(document.path)}</loc>`)
+			);
+			expect(entry).toBeDefined();
+			if (document.updatedAt)
+				expect(entry).toContain(`<lastmod>${document.updatedAt}</lastmod>`);
+			else expect(entry).not.toContain('<lastmod>');
+		}
 	});
 
 	it('registers translated picture routes and previews reciprocal language links', () => {
