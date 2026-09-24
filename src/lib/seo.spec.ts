@@ -5,10 +5,12 @@ import { locales, localizedRoutes } from './i18n';
 import {
 	alternateDocuments,
 	canonicalUrl,
+	createOrganizationStructuredData,
 	createSitemapXml,
 	getSeoDocument,
 	seoDocuments
 } from './seo';
+import { createPublicSiteConfig } from './site';
 
 describe('SEO configuration', () => {
 	it('registers every localized route and content document', () => {
@@ -80,5 +82,30 @@ describe('SEO configuration', () => {
 				);
 			}
 		}
+	});
+
+	it('includes only confirmed company facts in organization structured data', () => {
+		const preview = createOrganizationStructuredData(createPublicSiteConfig({}));
+		expect(preview).toMatchObject({
+			'@type': 'Organization',
+			name: 'Skorovas Camping',
+			email: 'booking@skorovascamping.no'
+		});
+		expect(JSON.stringify(preview)).not.toContain('XXX');
+		expect(preview).not.toHaveProperty('telephone');
+		expect(preview).not.toHaveProperty('address');
+
+		const confirmed = createOrganizationStructuredData(
+			createPublicSiteConfig({
+				PUBLIC_SITE_OPERATOR_NAME: 'Verified Operator SA',
+				PUBLIC_SITE_OPERATOR_ORG_NUMBER: '999 999 999',
+				PUBLIC_SITE_OPERATOR_ADDRESS: 'Verified address, Norway'
+			})
+		);
+		expect(confirmed).toMatchObject({
+			legalName: 'Verified Operator SA',
+			identifier: { value: '999 999 999' },
+			address: 'Verified address, Norway'
+		});
 	});
 });

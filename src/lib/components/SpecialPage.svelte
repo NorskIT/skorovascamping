@@ -7,18 +7,13 @@
 	import { getNews } from '$lib/content';
 	import { getMessages, type LocalizedRoute } from '$lib/i18n';
 	import { getEnhancedImage } from '$lib/images';
-	import { getSeoDocument } from '$lib/seo';
-	import { siteConfig } from '$lib/site';
+	import { createOrganizationStructuredData, getSeoDocument } from '$lib/seo';
+	import { siteConfig, unconfirmedValue } from '$lib/site';
 
 	let { route }: { route: LocalizedRoute } = $props();
 	const text = $derived(getMessages(route.locale));
 	const news = $derived(getNews(route.locale, !siteConfig.isProduction));
-	const privacyContact = [
-		siteConfig.operator.privacyEmail === 'XXXXX'
-			? siteConfig.bookingEmail
-			: siteConfig.operator.privacyEmail,
-		siteConfig.operator.privacyPhone
-	]
+	const privacyContact = [siteConfig.operator.privacyEmail, siteConfig.operator.privacyPhone]
 		.filter(Boolean)
 		.join(' / ');
 	const campioNotice = {
@@ -81,7 +76,10 @@
 	} as const;
 </script>
 
-<SeoHead document={getSeoDocument(route.path)} />
+<SeoHead
+	document={getSeoDocument(route.path)}
+	structuredData={route.id === 'contact' ? createOrganizationStructuredData() : undefined}
+/>
 <main class="wrap special">
 	<p class="eyebrow">Skorovas Camping</p>
 	<h1>{heading}</h1>
@@ -111,11 +109,28 @@
 						onclick={() => trackContact(ContactMethod.Phone)}
 						><small>{text.phone}</small>{siteConfig.bookingPhone}</a
 					>{/if}
-				{#if siteConfig.bookingEmail !== 'XXXXX'}<a
+				{#if siteConfig.bookingEmail !== unconfirmedValue}<a
 						href={`mailto:${siteConfig.bookingEmail}`}
 						onclick={() => trackContact(ContactMethod.Email)}
 						><small>{text.email}</small>{siteConfig.bookingEmail}</a
 					>{/if}
+				<section class="business-details" aria-labelledby="business-details-heading">
+					<h2 id="business-details-heading">{text.businessDetails}</h2>
+					<dl>
+						<div>
+							<dt>{text.operatorName}</dt>
+							<dd>{siteConfig.operator.name}</dd>
+						</div>
+						<div>
+							<dt>{text.organisationNumber}</dt>
+							<dd>{siteConfig.operator.organisationNumber}</dd>
+						</div>
+						<div>
+							<dt>{text.businessAddress}</dt>
+							<dd>{siteConfig.operator.address}</dd>
+						</div>
+					</dl>
+				</section>
 			</div>
 			<ContactForm locale={route.locale} />
 		</div>
@@ -194,6 +209,7 @@
 	}
 	.contact-grid {
 		display: grid;
+		align-items: start;
 		gap: 2rem;
 	}
 	.contact-details {
@@ -215,6 +231,28 @@
 		font-size: 0.75rem;
 		text-transform: uppercase;
 		letter-spacing: 0.12em;
+	}
+	.business-details h2 {
+		margin: 1rem 0 0;
+		font:
+			500 1.65rem Georgia,
+			serif;
+	}
+	.business-details dl {
+		margin: 0;
+	}
+	.business-details dl div {
+		padding: 0.8rem 0;
+		border-bottom: 1px solid #d5ddd5;
+	}
+	.business-details dt {
+		color: #5c695f;
+		font-size: 0.9rem;
+	}
+	.business-details dd {
+		margin: 0.2rem 0 0;
+		font-weight: 700;
+		overflow-wrap: anywhere;
 	}
 	.legal {
 		max-width: 48rem;

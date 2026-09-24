@@ -42,11 +42,17 @@ export interface PublicSiteConfig {
 	contactFormEnabled: boolean;
 }
 
-const placeholder = 'XXXXX';
+export const unconfirmedValue = 'XXX';
 
-const valueOrPlaceholder = (value?: string) => value?.trim() || placeholder;
-const optionalPhone = (value?: string) =>
-	value?.trim() === placeholder ? '' : value?.trim() || '';
+const isUnconfirmed = (value?: string) => !value || /^X{3,5}$/i.test(value);
+const valueOrPlaceholder = (value?: string) => {
+	const trimmed = value?.trim();
+	return isUnconfirmed(trimmed) ? unconfirmedValue : trimmed || unconfirmedValue;
+};
+const optionalPhone = (value?: string) => {
+	const trimmed = value?.trim();
+	return isUnconfirmed(trimmed) ? '' : trimmed || '';
+};
 
 export function createPublicSiteConfig(environment: PublicSiteEnvironment): PublicSiteConfig {
 	const target = Object.values(DeployTarget).includes(
@@ -55,7 +61,10 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		? (environment.PUBLIC_DEPLOY_TARGET as DeployTarget)
 		: DeployTarget.Local;
 	const gtmContainerId = environment.PUBLIC_GTM_CONTAINER_ID?.trim() ?? '';
-	const bookingEmail = environment.PUBLIC_BOOKING_EMAIL?.trim() || defaultBookingEmail;
+	const configuredBookingEmail = environment.PUBLIC_BOOKING_EMAIL?.trim();
+	const bookingEmail = isUnconfirmed(configuredBookingEmail)
+		? defaultBookingEmail
+		: configuredBookingEmail || defaultBookingEmail;
 	const operator = {
 		name: valueOrPlaceholder(environment.PUBLIC_SITE_OPERATOR_NAME),
 		organisationNumber: valueOrPlaceholder(environment.PUBLIC_SITE_OPERATOR_ORG_NUMBER),
@@ -64,10 +73,10 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		privacyPhone: optionalPhone(environment.PUBLIC_PRIVACY_CONTACT_PHONE)
 	};
 	const operatorIsComplete =
-		operator.name !== placeholder &&
-		operator.organisationNumber !== placeholder &&
-		operator.address !== placeholder &&
-		(operator.privacyEmail !== placeholder || Boolean(operator.privacyPhone));
+		operator.name !== unconfirmedValue &&
+		operator.organisationNumber !== unconfirmedValue &&
+		operator.address !== unconfirmedValue &&
+		(operator.privacyEmail !== unconfirmedValue || Boolean(operator.privacyPhone));
 	const isProduction = target === DeployTarget.Production;
 	if (isProduction && !operatorIsComplete)
 		throw new Error(
@@ -85,7 +94,7 @@ export function createPublicSiteConfig(environment: PublicSiteEnvironment): Publ
 		bookingPhone,
 		bookingEmail,
 		turnstileSiteKey,
-		contactFormEnabled: Boolean(turnstileSiteKey && bookingEmail !== placeholder),
+		contactFormEnabled: Boolean(turnstileSiteKey && bookingEmail !== unconfirmedValue),
 		analyticsEnabled:
 			isProduction && operatorIsComplete && /^GTM-[A-Z0-9]+$/.test(gtmContainerId)
 	};

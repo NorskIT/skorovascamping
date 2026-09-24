@@ -13,7 +13,9 @@ describe('site configuration', () => {
 		expect(config.target).toBe(DeployTarget.Local);
 		expect(config.isProduction).toBe(false);
 		expect(config.analyticsEnabled).toBe(false);
-		expect(config.operator.name).toBe('XXXXX');
+		expect(config.operator.name).toBe('XXX');
+		expect(config.operator.organisationNumber).toBe('XXX');
+		expect(config.operator.address).toBe('XXX');
 		expect(config.contactFormEnabled).toBe(false);
 	});
 
@@ -32,6 +34,7 @@ describe('site configuration', () => {
 		expect(config.bookingPhone).toBe('');
 		expect(config.operator.privacyPhone).toBe('');
 		expect(createPublicSiteConfig({ PUBLIC_BOOKING_PHONE: 'XXXXX' }).bookingPhone).toBe('');
+		expect(createPublicSiteConfig({ PUBLIC_BOOKING_PHONE: 'XXX' }).bookingPhone).toBe('');
 	});
 
 	it('only enables analytics for a completely configured production build', () => {
@@ -54,6 +57,14 @@ describe('site configuration', () => {
 			createPublicSiteConfig({
 				PUBLIC_DEPLOY_TARGET: 'production',
 				PUBLIC_GTM_CONTAINER_ID: 'GTM-THZ27K96'
+			})
+		).toThrow('Production requires confirmed operator');
+		expect(() =>
+			createPublicSiteConfig({
+				PUBLIC_DEPLOY_TARGET: 'production',
+				PUBLIC_SITE_OPERATOR_NAME: 'XXX',
+				PUBLIC_SITE_OPERATOR_ORG_NUMBER: 'XXXXX',
+				PUBLIC_SITE_OPERATOR_ADDRESS: 'XXX'
 			})
 		).toThrow('Production requires confirmed operator');
 	});

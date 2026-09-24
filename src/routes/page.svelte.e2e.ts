@@ -29,6 +29,43 @@ test('serves localized routes with the correct document language', async ({ page
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Praktische Informationen');
 });
 
+test('shows business contact fields in every language without publishing placeholder schema data', async ({
+	page
+}) => {
+	for (const [path, heading, labels] of [
+		[
+			'/kontakt',
+			'Firmaopplysninger',
+			['Driftsansvarlig', 'Organisasjonsnummer', 'Firmaadresse']
+		],
+		[
+			'/en/contact',
+			'Business details',
+			['Operator', 'Organisation number', 'Business address']
+		],
+		[
+			'/de/kontakt',
+			'Unternehmensangaben',
+			['Betreiber', 'Organisationsnummer', 'Geschäftsanschrift']
+		]
+	] as const) {
+		await page.goto(path);
+		const details = page.getByRole('region', { name: heading });
+		await expect(details.locator('dt')).toHaveText(labels);
+		await expect(details.locator('dd')).toHaveText(['XXX', 'XXX', 'XXX']);
+		await expect(
+			page.getByRole('link', { name: /booking@skorovascamping.no/ }).first()
+		).toHaveAttribute('href', 'mailto:booking@skorovascamping.no');
+		await expect(page.locator('a[href^="tel:"]')).toHaveCount(0);
+		const data = JSON.parse(
+			(await page.locator('script[type="application/ld+json"]').textContent()) ?? '{}'
+		);
+		expect(data['@type']).toBe('Organization');
+		expect(data.email).toBe('booking@skorovascamping.no');
+		expect(JSON.stringify(data)).not.toContain('XXX');
+	}
+});
+
 test('serves crawler instructions and a sitemap without review content', async ({ request }) => {
 	const robots = await (await request.get('/robots.txt')).text();
 	expect(robots).toContain('Disallow: /');

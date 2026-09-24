@@ -90,7 +90,7 @@ Google Analytics is loaded through Google Tag Manager only on production and onl
 - `PUBLIC_SITE_OPERATOR_ADDRESS`
 - `PUBLIC_PRIVACY_CONTACT_PHONE`
 
-See `.env.example` for local configuration. Missing operator values render as `XXXXX` on beta and block a production build. Beta still renders the cookie-consent interface for review but never loads GTM.
+See `.env.example` for local configuration. Missing operator values render as `XXX` on beta and block a production build. The contact page shows the operator name, organisation number and business address in all three languages; confirmed values also feed its organization structured data. Beta still renders the cookie-consent interface for review but never loads GTM.
 
 ## Content and translations
 

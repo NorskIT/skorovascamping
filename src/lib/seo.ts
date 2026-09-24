@@ -1,6 +1,12 @@
 import { contentDocuments, newsDocuments, type ContentStatus } from '$lib/content';
 import { locales, localizedPath, type Locale, type PageId } from '$lib/i18n';
-import { productionOrigin, siteConfig, siteName } from '$lib/site';
+import {
+	productionOrigin,
+	siteConfig,
+	siteName,
+	unconfirmedValue,
+	type PublicSiteConfig
+} from '$lib/site';
 
 export interface SeoDocument {
 	path: string;
@@ -141,6 +147,32 @@ export function getSeoDocument(path: string): SeoDocument {
 
 export function canonicalUrl(path: string): string {
 	return new URL(path, productionOrigin).toString();
+}
+
+export function createOrganizationStructuredData(config: PublicSiteConfig = siteConfig) {
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'Organization',
+		name: siteName,
+		url: productionOrigin,
+		email: config.bookingEmail,
+		...(config.operator.name !== unconfirmedValue && config.operator.name !== siteName
+			? { legalName: config.operator.name }
+			: {}),
+		...(config.operator.organisationNumber !== unconfirmedValue
+			? {
+					identifier: {
+						'@type': 'PropertyValue',
+						propertyID: 'Norwegian organisation number',
+						value: config.operator.organisationNumber
+					}
+				}
+			: {}),
+		...(config.operator.address !== unconfirmedValue
+			? { address: config.operator.address }
+			: {}),
+		...(config.bookingPhone ? { telephone: config.bookingPhone } : {})
+	};
 }
 
 export function alternateDocuments(document: SeoDocument): readonly SeoDocument[] {
