@@ -12,6 +12,12 @@ on:
         required: true
       CLOUDFLARE_API_TOKEN:
         required: true
+      PUBLIC_GTM_CONTAINER_ID:
+        required: false
+      TURNSTILE_SITEKEY:
+        required: false
+      TURNSTILE_SECRET:
+        required: false
 
 permissions:
   contents: read
@@ -24,6 +30,16 @@ jobs:
     environment:
       name: ${{ inputs.target }}
       url: ${{ inputs.target == 'beta' && 'https://beta.skorovascamping.no' || 'https://skorovascamping.no' }}
+    env:
+      PUBLIC_DEPLOY_TARGET: ${{ inputs.target }}
+      PUBLIC_GTM_CONTAINER_ID: ${{ secrets.PUBLIC_GTM_CONTAINER_ID }}
+      PUBLIC_SITE_OPERATOR_NAME: ${{ vars.PUBLIC_SITE_OPERATOR_NAME }}
+      PUBLIC_SITE_OPERATOR_ORG_NUMBER: ${{ vars.PUBLIC_SITE_OPERATOR_ORG_NUMBER }}
+      PUBLIC_SITE_OPERATOR_ADDRESS: ${{ vars.PUBLIC_SITE_OPERATOR_ADDRESS }}
+      PUBLIC_PRIVACY_CONTACT_PHONE: ${{ vars.PUBLIC_PRIVACY_CONTACT_PHONE }}
+      PUBLIC_BOOKING_PHONE: ${{ vars.PUBLIC_BOOKING_PHONE }}
+      PUBLIC_BOOKING_EMAIL: ${{ vars.PUBLIC_BOOKING_EMAIL }}
+      PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITEKEY }}
 
     steps:
       - name: Check out repository
@@ -34,6 +50,28 @@ jobs:
         with:
           node-version-file: .node-version
           cache: npm
+
+      - name: Validate deployment configuration
+        env:
+          TURNSTILE_SECRET: ${{ secrets.TURNSTILE_SECRET }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { defaultBookingEmail } from './src/lib/contact-email.js';
+
+          const env = process.env;
+          if (!['beta', 'production'].includes(env.PUBLIC_DEPLOY_TARGET)) {
+            throw new Error('Deployment target must be beta or production');
+          }
+          const email = env.PUBLIC_BOOKING_EMAIL?.trim() || defaultBookingEmail;
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw new Error('Invalid GitHub variable PUBLIC_BOOKING_EMAIL');
+          }
+          const siteKey = env.PUBLIC_TURNSTILE_SITE_KEY?.trim();
+          const secretKey = env.TURNSTILE_SECRET?.trim();
+          if (Boolean(siteKey) !== Boolean(secretKey)) {
+            throw new Error('Set both TURNSTILE_SITEKEY and TURNSTILE_SECRET, or leave both unset');
+          }
+          NODE
 
       - name: Install dependencies
         run: npm ci
@@ -47,27 +85,49 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit -- --run
 
-      - name: Build for Cloudflare Workers
-        run: npm run build
-
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
       - name: Run end-to-end tests
         run: npm run test:e2e
 
-      - name: Deploy beta Worker
-        if: inputs.target == 'beta'
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env beta
+      # Playwright builds a beta test site. Rebuild for the selected deployment target.
+      - name: Build for Cloudflare Workers
+        run: npm run build
 
-      - name: Deploy production Worker
-        if: inputs.target == 'production'
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env=""
+      - name: Deploy Worker and secrets
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TURNSTILE_SECRET: ${{ secrets.TURNSTILE_SECRET }}
+        run: |
+          export DEPLOY_SECRETS_FILE="$(mktemp)"
+          trap 'rm -f "$DEPLOY_SECRETS_FILE" .wrangler-deploy.json' EXIT
+
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          import { defaultBookingEmail } from './src/lib/contact-email.js';
+
+          const email = process.env.PUBLIC_BOOKING_EMAIL?.trim() || defaultBookingEmail;
+          const secret = process.env.TURNSTILE_SECRET?.trim() || '';
+          const config = JSON.parse(readFileSync('wrangler.jsonc', 'utf8'));
+          const selected = process.env.PUBLIC_DEPLOY_TARGET === 'beta' ? config.env.beta : config;
+          selected.send_email = secret ? [{
+            name: 'CONTACT_EMAIL',
+            destination_address: email,
+            allowed_sender_addresses: [email]
+          }] : [];
+          // Keep relative asset paths intact; neither file is committed.
+          writeFileSync('.wrangler-deploy.json', JSON.stringify(config), { mode: 0o600 });
+          // An empty value disables the previous credential when the form is turned off.
+          writeFileSync(process.env.DEPLOY_SECRETS_FILE, JSON.stringify({
+            TURNSTILE_SECRET: secret
+          }), { mode: 0o600 });
+          NODE
+
+          worker_environment=""
+          if [ "$PUBLIC_DEPLOY_TARGET" = "beta" ]; then
+            worker_environment="beta"
+          fi
+          npx wrangler deploy --config .wrangler-deploy.json \
+            --env "$worker_environment" --secrets-file "$DEPLOY_SECRETS_FILE"

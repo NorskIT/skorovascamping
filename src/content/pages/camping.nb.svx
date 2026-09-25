@@ -1,0 +1,27 @@
+---
+id: camping
+locale: nb
+kind: page
+status: published
+title: Camping i Skorovas | Bobil, campingvogn og telt
+description: Se oppstillingsplasser, priser og fasiliteter for bobil, campingvogn og telt hos Skorovas Camping i Namdalen.
+heading: Camping i Skorovas
+eyebrow: Bobil, campingvogn og telt
+heroImage: camping-motorhome-pitches
+heroAlt: Bobiler mellom bjørketrærne på campingplassen
+updatedAt: 2026-09-24
+---
+
+## Oppstillingsplasser
+
+Skorovas Camping har to avdelinger: Kleiva og Sletta. På Sletta bor du ved Lisskorovatnet. Begge avdelingene har oppstillingsplasser for bobil og campingvogn med strøm og tilgang til toalett. Det er også mulig å telte ved vatnet. Butikken og Skjenkestova ligger i nærheten.
+
+## Priser
+
+- Bobil eller campingvogn på Kleiva: **350 kroner per døgn**, inkludert strøm og tilgang til toalett.
+- Bobil eller campingvogn på Sletta: **400 kroner per døgn**, inkludert strøm og tilgang til toalett.
+- Telt: **100 kroner per døgn**, inkludert tilgang til toalett.
+
+## Fasiliteter
+
+Det er tilgang til vann og toalett i Gruvekafeen innenfor butikken. Dusjen i Flerbrukshuset er for tiden ikke tilgjengelig. Miljøcontainere finnes ved campingen, og gratis tømmestasjon for gråvann og toalett ligger knapt én kilometer vest for plassen. Campingplassen drives av Skorovas samvirkelag SA. Bruk «Bestill plass» for å bestille via Campio. Har du spørsmål om oppholdet, kan du kontakte oss på **booking@skorovascamping.no**.
