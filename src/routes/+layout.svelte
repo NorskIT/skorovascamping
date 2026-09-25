@@ -9,7 +9,6 @@
 	import norwegianFlag from 'flag-icons/flags/4x3/no.svg?url';
 	import englishFlag from 'flag-icons/flags/4x3/gb.svg?url';
 	import germanFlag from 'flag-icons/flags/4x3/de.svg?url';
-	import favicon from '$lib/assets/favicon.svg';
 	import { getNewsDocumentByPath, newsDocuments } from '$lib/content';
 	import { getMessages, localizedPath, routeFromPath, type Locale } from '$lib/i18n';
 	import { siteConfig, siteName } from '$lib/site';
@@ -64,7 +63,10 @@
 	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16 32x32 48x48" />
+	<link rel="icon" href="/favicon.png" type="image/png" sizes="96x96" />
+</svelte:head>
 <svelte:window
 	onkeydown={(event) => {
 		if (event.key === 'Escape') menuOpen = false;
@@ -128,6 +130,21 @@
 				<strong>{siteName}</strong>
 				<p>{text.tagline}</p>
 			</div>
+			<address class="footer-contact">
+				<b>{siteConfig.operator.name}</b>
+				<span>{text.organisationNumber}: {siteConfig.operator.organisationNumber}</span>
+				<span>{siteConfig.operator.address}</span>
+				<a
+					href={`mailto:${siteConfig.bookingEmail}`}
+					onclick={() => trackContact(ContactMethod.Email)}>{siteConfig.bookingEmail}</a
+				>
+				{#if siteConfig.bookingPhone}<a
+						class="phone"
+						href={`tel:${siteConfig.bookingPhone.replaceAll(' ', '')}`}
+						onclick={() => trackContact(ContactMethod.Phone)}
+						>{siteConfig.bookingPhone}</a
+					>{/if}
+			</address>
 			<nav aria-label={text.legalInformation}>
 				<a href={resolve('/[...path]', { path: localizedPath('contact', locale).slice(1) })}
 					>{text.contactHeading}</a
@@ -141,11 +158,6 @@
 				><button type="button" onclick={showCookiePreferences}>{text.cookieSettings}</button
 				>
 			</nav>
-			{#if siteConfig.bookingPhone}<a
-					class="phone"
-					href={`tel:${siteConfig.bookingPhone.replaceAll(' ', '')}`}
-					onclick={() => trackContact(ContactMethod.Phone)}>{siteConfig.bookingPhone}</a
-				>{/if}
 		</div>
 	</footer>
 </div>
@@ -290,6 +302,14 @@
 		max-width: 32rem;
 		color: #b9c9be;
 	}
+	.footer-contact {
+		display: grid;
+		align-content: start;
+		gap: 0.7rem;
+		font-style: normal;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
 	footer nav {
 		display: grid;
 		gap: 0.7rem;
@@ -334,7 +354,7 @@
 			font-size: 0.88rem;
 		}
 		.footer-inner {
-			grid-template-columns: 2fr 1fr 1fr;
+			grid-template-columns: 1.3fr 1.3fr 1fr;
 		}
 	}
 </style>

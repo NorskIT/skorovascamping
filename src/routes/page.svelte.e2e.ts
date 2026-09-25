@@ -18,6 +18,29 @@ test('serves the new Norwegian landing page with safe SEO metadata', async ({ pa
 		(await page.locator('script[type="application/ld+json"]').textContent()) ?? '{}'
 	);
 	expect(structuredData['@type']).toBe('Campground');
+	const icons = page.locator('head link[rel="icon"]');
+	await expect(icons).toHaveCount(2);
+	for (const [path, type, sizes] of [
+		['/favicon.ico', 'image/x-icon', '16x16 32x32 48x48'],
+		['/favicon.png', 'image/png', '96x96']
+	]) {
+		const icon = page.locator(`head link[rel="icon"][type="${type}"]`);
+		expect(new URL((await icon.getAttribute('href')) ?? '', page.url()).pathname).toBe(path);
+		await expect(icon).toHaveAttribute('type', type);
+		await expect(icon).toHaveAttribute('sizes', sizes);
+		const response = await page.request.get(path);
+		expect(response.status()).toBe(200);
+		expect(response.headers()['content-type']).toMatch(
+			path.endsWith('.png') ? /^image\/png/ : /^image\/(x-icon|vnd.microsoft.icon)/
+		);
+	}
+	const dimensions = await page.evaluate(async () => {
+		const image = new Image();
+		image.src = '/favicon.png';
+		await image.decode();
+		return [image.naturalWidth, image.naturalHeight];
+	});
+	expect(dimensions).toEqual([96, 96]);
 });
 
 test('serves localized routes with the correct document language', async ({ page }) => {
