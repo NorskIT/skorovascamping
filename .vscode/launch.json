@@ -8,6 +8,7 @@
 			"url": "http://127.0.0.1:5173",
 			"webRoot": "${workspaceFolder}",
 			"preLaunchTask": "SvelteKit: dev",
+			"postDebugTask": "SvelteKit: stop dev",
 			"sourceMaps": true
 		}
 	]
