@@ -114,7 +114,7 @@ jobs:
           const selected = process.env.PUBLIC_DEPLOY_TARGET === 'beta' ? config.env.beta : config;
           selected.send_email = secret ? [{
             name: 'CONTACT_EMAIL',
-            destination_address: email,
+            allowed_destination_addresses: [email],
             allowed_sender_addresses: [email]
           }] : [];
           // Keep relative asset paths intact; neither file is committed.
