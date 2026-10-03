@@ -24,7 +24,31 @@ interface TurnstileResult {
 const text = (value: unknown, max: number) =>
 	typeof value === 'string' ? value.trim().slice(0, max) : '';
 
+// Only documented provider codes are logged, never exception messages or request data.
+const emailCodes = new Set([
+	'E_VALIDATION_ERROR',
+	'E_FIELD_MISSING',
+	'E_SENDER_NOT_VERIFIED',
+	'E_RECIPIENT_NOT_ALLOWED',
+	'E_RECIPIENT_SUPPRESSED',
+	'E_SENDER_DOMAIN_NOT_AVAILABLE',
+	'E_CONTENT_TOO_LARGE',
+	'E_DELIVERY_FAILED',
+	'E_RATE_LIMIT_EXCEEDED',
+	'E_DAILY_LIMIT_EXCEEDED',
+	'E_INTERNAL_SERVER_ERROR'
+]);
+function providerCode(error: unknown): string {
+	const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+	return typeof code === 'string' && emailCodes.has(code) ? code : 'UNKNOWN';
+}
+
 export const POST: RequestHandler = async ({ request, platform, getClientAddress }) => {
+	const requestId = crypto.randomUUID();
+	function unavailable(operation: string, code: string, status = 503) {
+		console.error({ event: 'contact_failed', operation, code, requestId });
+		return json({ ok: false, error: 'unavailable', requestId }, { status });
+	}
 	if (!request.headers.get('content-type')?.includes('application/json')) {
 		return json({ ok: false, error: 'invalid_request' }, { status: 415 });
 	}
@@ -72,13 +96,25 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 
 	const env = platform?.env;
 	if (!env?.TURNSTILE_SECRET || !env.CONTACT_EMAIL) {
-		return json({ ok: false, error: 'unavailable' }, { status: 503 });
+		return unavailable(
+			'configuration',
+			!env?.TURNSTILE_SECRET ? 'MISSING_TURNSTILE_SECRET' : 'MISSING_CONTACT_EMAIL'
+		);
 	}
 
-	const clientAddress = getClientAddress();
-	if (env.CONTACT_RATE_LIMITER) {
-		const rateLimit = await env.CONTACT_RATE_LIMITER.limit({ key: clientAddress });
-		if (!rateLimit.success) return json({ ok: false, error: 'rate_limited' }, { status: 429 });
+	let clientAddress: string;
+	try {
+		clientAddress = getClientAddress();
+		if (env.CONTACT_RATE_LIMITER) {
+			const rateLimit = await env.CONTACT_RATE_LIMITER.limit({ key: clientAddress });
+			if (!rateLimit.success)
+				return json(
+					{ ok: false, error: 'rate_limited' },
+					{ status: 429, headers: { 'retry-after': '60' } }
+				);
+		}
+	} catch {
+		return unavailable('rate_limit', 'RATE_LIMIT_UNAVAILABLE');
 	}
 
 	const expectedHostnames: Record<string, string[]> = {
@@ -110,23 +146,28 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 			return json({ ok: false, error: 'verification' }, { status: 400 });
 		}
 	} catch {
-		return json({ ok: false, error: 'verification' }, { status: 400 });
+		return unavailable('verification', 'SITEVERIFY_UNAVAILABLE');
 	}
 
 	const replyTo = payload.email || undefined;
-	await env.CONTACT_EMAIL.send({
-		to: siteConfig.bookingEmail,
-		from: siteConfig.bookingEmail,
-		replyTo,
-		subject: `Forespørsel fra Skorovas Camping (${payload.locale})`,
-		text: [
-			`Navn: ${payload.name}`,
-			`E-post: ${payload.email || 'Ikke oppgitt'}`,
-			`Telefon: ${payload.phone || 'Ikke oppgitt'}`,
-			'',
-			payload.message
-		].join('\n')
-	});
+	try {
+		const result = await env.CONTACT_EMAIL.send({
+			to: siteConfig.bookingEmail,
+			from: siteConfig.bookingEmail,
+			replyTo,
+			subject: `Forespørsel fra Skorovas Camping (${payload.locale})`,
+			text: [
+				`Navn: ${payload.name}`,
+				`E-post: ${payload.email || 'Ikke oppgitt'}`,
+				`Telefon: ${payload.phone || 'Ikke oppgitt'}`,
+				'',
+				payload.message
+			].join('\n')
+		});
+		if (!result?.messageId) return unavailable('email', 'MISSING_MESSAGE_ID', 502);
+	} catch (error) {
+		return unavailable('email', providerCode(error), 502);
+	}
 
 	return json({ ok: true });
 };

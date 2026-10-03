@@ -1,5 +1,48 @@
 import { expect, test } from '@playwright/test';
 
+test('all full-size photos stay inside the stage and above the caption at every viewport', async ({
+	page
+}) => {
+	for (const viewport of [
+		{ width: 1440, height: 900 },
+		{ width: 1366, height: 600 },
+		{ width: 768, height: 900 },
+		{ width: 390, height: 844 }
+	]) {
+		await page.setViewportSize(viewport);
+		await page.goto('/bilder');
+		await page.locator('main .photo-grid button').first().click();
+		const dialog = page.getByRole('dialog');
+		for (let index = 0; index < 20; index++) {
+			const img = dialog.locator('.stage img');
+			await expect
+				.poll(() =>
+					img.evaluate((node: HTMLImageElement) => node.complete && node.naturalWidth > 0)
+				)
+				.toBe(true);
+			const photo = await img.boundingBox();
+			const stage = await dialog.locator('.stage').boundingBox();
+			const caption = await dialog.locator('.caption').boundingBox();
+			const thumbnails = await dialog.locator('.thumbnails').boundingBox();
+			expect(photo!.height).toBeGreaterThan(0);
+			expect(photo!.y).toBeGreaterThanOrEqual(stage!.y - 1);
+			expect(photo!.y + photo!.height).toBeLessThanOrEqual(caption!.y + 1);
+			expect(photo!.x + photo!.width).toBeLessThanOrEqual(stage!.x + stage!.width + 1);
+			expect(thumbnails!.y + thumbnails!.height).toBeLessThanOrEqual(viewport.height);
+			await expect(img).toHaveCSS('object-fit', 'contain');
+			expect(await dialog.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(
+				true
+			);
+			if (index === 2 || index === 19)
+				await page.screenshot({
+					path: `test-results/gallery-${viewport.width}-${viewport.height}-${index + 1}.png`
+				});
+			await page.keyboard.press('ArrowRight');
+		}
+		await page.keyboard.press('Escape');
+	}
+});
+
 test('mobile menu closes for navigation, the current page, and language changes', async ({
 	page
 }) => {

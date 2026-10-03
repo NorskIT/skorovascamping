@@ -202,8 +202,11 @@
 	}
 	.viewer {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto minmax(0, 1fr) auto auto;
 		height: 100%;
+		min-width: 0;
+		overflow: hidden;
 	}
 	.viewer-header {
 		display: flex;
@@ -236,9 +239,12 @@
 		display: grid;
 		place-items: center;
 		min-height: 0;
+		min-width: 0;
 		overflow: hidden;
 	}
 	.stage :global(picture) {
+		position: absolute;
+		inset: 0;
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -248,6 +254,8 @@
 		width: 100%;
 		height: 100%;
 		object-fit: contain;
+		max-width: 100%;
+		max-height: 100%;
 	}
 	.viewer .arrow {
 		position: absolute;
@@ -273,6 +281,7 @@
 		text-align: center;
 	}
 	.thumbnails {
+		min-width: 0;
 		display: flex;
 		gap: 0.5rem;
 		overflow-x: auto;

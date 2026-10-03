@@ -3,6 +3,7 @@
 	import { trackBooking } from '$lib/analytics/tracking';
 	import { bookingUrl } from '$lib/booking';
 	import PhotoGallery from '$lib/components/PhotoGallery.svelte';
+	import BookingBar from '$lib/components/BookingBar.svelte';
 	import { photosForPage } from '$lib/photos';
 	import ExternalCalendar from '$lib/components/ExternalCalendar.svelte';
 	import SeoHead from '$lib/components/SeoHead.svelte';
@@ -92,6 +93,9 @@
 				onclick={trackBooking}>{text.book}</a
 			>
 		</div>
+		{#if document.id === 'home'}
+			<div class="wrap"><BookingBar locale={document.locale} /></div>
+		{/if}
 	</section>
 
 	<section class="article wrap">

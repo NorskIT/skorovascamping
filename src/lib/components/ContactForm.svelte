@@ -7,6 +7,27 @@
 	let { locale }: { locale: Locale } = $props();
 	const text = $derived(getMessages(locale));
 	let submissionState = $state<'idle' | 'sending' | 'success' | 'error'>('idle');
+	let errorCode = $state('unavailable');
+	let requestId = $state('');
+	const errors = {
+		nb: {
+			validation: 'Fyll inn navn, melding og en gyldig e-postadresse eller et telefonnummer.',
+			verification: 'Sikkerhetskontrollen må fornyes. Fullfør den og prøv igjen.',
+			rate_limited: 'For mange forsøk. Vent ett minutt før du prøver igjen.'
+		},
+		en: {
+			validation: 'Enter your name, message and a valid email address or phone number.',
+			verification: 'Please complete the security check again before retrying.',
+			rate_limited: 'Too many attempts. Please wait one minute before trying again.'
+		},
+		de: {
+			validation:
+				'Geben Sie Ihren Namen, eine Nachricht und eine gültige E-Mail-Adresse oder Telefonnummer ein.',
+			verification: 'Bitte führen Sie die Sicherheitsprüfung erneut durch.',
+			rate_limited:
+				'Zu viele Versuche. Bitte warten Sie eine Minute und versuchen Sie es erneut.'
+		}
+	};
 
 	let container = $state<HTMLDivElement>();
 	let token = $state('');
@@ -15,6 +36,8 @@
 	$effect(() => {
 		const element = container;
 		const language = locale;
+		errorCode = 'unavailable';
+		requestId = '';
 		if (!element) return;
 		let disposed = false;
 		token = '';
@@ -36,6 +59,7 @@
 					'error-callback': () => {
 						if (!disposed) {
 							token = '';
+							errorCode = 'verification';
 							submissionState = 'error';
 						}
 					}
@@ -70,6 +94,8 @@
 		event.preventDefault();
 		if (!token || submissionState === 'sending') return;
 		submissionState = 'sending';
+		errorCode = 'unavailable';
+		requestId = '';
 		const form = event.currentTarget as HTMLFormElement;
 		const data = new FormData(form);
 		try {
@@ -86,8 +112,27 @@
 					turnstileToken: token
 				})
 			});
-			submissionState = response.ok ? 'success' : 'error';
-			if (response.ok) {
+			const result = (await response.json().catch(() => null)) as {
+				ok?: unknown;
+				error?: unknown;
+				requestId?: unknown;
+			} | null;
+			const success = response.ok && result?.ok === true;
+			submissionState = success ? 'success' : 'error';
+			if (!success) {
+				errorCode =
+					typeof result?.error === 'string'
+						? result.error
+						: response.status === 429
+							? 'rate_limited'
+							: 'unavailable';
+				if (
+					typeof result?.requestId === 'string' &&
+					/^[a-f0-9-]{36}$/.test(result.requestId)
+				)
+					requestId = result.requestId;
+			}
+			if (success) {
 				form.reset();
 				trackLead();
 			}
@@ -152,9 +197,21 @@
 			{submissionState === 'success'
 				? feedback[locale].success
 				: submissionState === 'error'
-					? feedback[locale].error
+					? (errors[locale][errorCode as keyof typeof errors.nb] ??
+						feedback[locale].error)
 					: ''}
 		</p>
+		{#if submissionState === 'error'}
+			<p class="feedback">
+				<a
+					href={`mailto:${siteConfig.bookingEmail}`}
+					onclick={() => trackContact(ContactMethod.Email)}>{siteConfig.bookingEmail}</a
+				>
+			</p>
+			{#if requestId}<p class="feedback">
+					{locale === 'nb' ? 'Referanse' : locale === 'de' ? 'Referenz' : 'Reference'}: {requestId}
+				</p>{/if}
+		{/if}
 	</form>
 {:else}
 	<p class="notice">

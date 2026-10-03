@@ -112,6 +112,14 @@ The default contact address is `booking@skorovascamping.no`; `PUBLIC_BOOKING_EMA
 
 ## Contact form
 
+### Contact diagnostics
+
+Workers observability is enabled for both production and beta in `wrangler.jsonc`, with full log sampling and query strings redacted. It becomes active on the next deployment through the existing GitHub workflow. In Cloudflare, select the relevant Worker and open **Observability > Logs**. Filter for `contact_failed`, then use the reference shown by the form (`requestId`) to find the failed operation. Application logs contain only the operation, a known error code and the random reference; they never include form contents, tokens, IP addresses or raw provider exceptions. Cloudflare invocation logs additionally record request metadata.
+
+`configuration` identifies missing runtime bindings/secrets, `rate_limit` a limiter failure, `verification` a Siteverify service failure, and `email` a delivery rejection. Email codes such as `E_SENDER_NOT_VERIFIED` and `E_SENDER_DOMAIN_NOT_AVAILABLE` indicate that the sender domain needs attention in Cloudflare **Email Service > Email Sending**. Check sender activation and the deployed binding restrictions before changing application code. `UNKNOWN` deliberately omits unrecognized exception details; consult Cloudflare Email Service logs for delivery diagnostics. No automatic email retry is performed, to avoid duplicate enquiries.
+
+After deployment, use a fresh Turnstile token for one owner-submitted test, confirm inbox delivery and Reply-To, and check that replaying the token is rejected. Local mocks cannot confirm service activation or real delivery. Configuration changes remain in GitHub; do not work around an email error by disabling Turnstile or relaxing CSP.
+
 All deployed configuration is maintained in GitHub. No Worker variables or secrets need to be entered manually in Cloudflare. The reusable deployment job selects the GitHub environment `beta` or `production`, builds with its public variables, and deploys with its server secrets. Validation and deployment are defined directly in `.github/workflows/_deploy-worker.yml`, with no separate deployment scripts. The workflow uses the installed Wrangler's supported `deploy --secrets-file` option to upload code and secrets together. Temporary files are private and removed after the command; secret values are never placed in command arguments or printed by the workflow.
 
 Put shared values under **Settings > Secrets and variables > Actions**. Use **Settings > Environments > beta / production** only for values that differ, such as the production GTM ID or separate Turnstile widgets. Environment values override repository defaults.

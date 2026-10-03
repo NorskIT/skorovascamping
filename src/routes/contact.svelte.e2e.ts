@@ -22,13 +22,28 @@ test('contact verification survives navigation, expires and resets after submiss
 		})
 	);
 	let attempts = 0;
+	const failures = [
+		{ status: 502, error: 'unavailable', text: 'Unable to send' },
+		{ status: 429, error: 'rate_limited', text: 'wait one minute' },
+		{ status: 400, error: 'verification', text: 'security check again' },
+		{ status: 400, error: 'validation', text: 'valid email address or phone number' }
+	];
 	await page.route('**/api/contact', async (route) => {
 		expect(route.request().postDataJSON()).toMatchObject({
 			turnstileToken: 'test-token',
 			email: 'visitor@example.com'
 		});
-		attempts++;
-		await route.fulfill({ status: attempts === 1 ? 400 : 200, json: { ok: attempts > 1 } });
+		const failure = failures[attempts++];
+		await route.fulfill({
+			status: failure?.status ?? 200,
+			json: failure
+				? {
+						ok: false,
+						error: failure.error,
+						requestId: '12345678-1234-1234-1234-123456789abc'
+					}
+				: { ok: true }
+		});
 	});
 	await page.goto('/en');
 	await page.locator('main a[href="/en/contact"]').first().click();
@@ -45,15 +60,26 @@ test('contact verification survives navigation, expires and resets after submiss
 	await expect(send).toBeDisabled();
 	await page.getByRole('button', { name: 'Verify test visitor' }).click();
 	await send.click();
-	await expect(form.locator('.feedback')).toContainText('Unable to send');
+	await expect(form.locator('.feedback').first()).toContainText('Unable to send');
 	await expect(send).toBeDisabled();
 	await expect(form.locator('[data-action]')).toHaveAttribute('data-reset', 'test-widget');
 	await expect(form.locator('[name="message"]')).toHaveValue(
 		'A camping enquiry for next summer.'
 	);
+	await expect(form.getByRole('link', { name: 'booking@skorovascamping.no' })).toBeVisible();
+	await expect(form).toContainText('12345678-1234-1234-1234-123456789abc');
+	for (const failure of failures.slice(1)) {
+		await page.getByRole('button', { name: 'Verify test visitor' }).click();
+		await send.click();
+		await expect(form.locator('.feedback').first()).toContainText(failure.text);
+		await expect(send).toBeDisabled();
+		await expect(form.locator('[name="message"]')).toHaveValue(
+			'A camping enquiry for next summer.'
+		);
+	}
 	await page.getByRole('button', { name: 'Verify test visitor' }).click();
 	await send.click();
-	await expect(form.locator('.feedback')).toContainText('has been sent');
+	await expect(form.locator('.feedback').first()).toContainText('has been sent');
 	await expect(send).toBeDisabled();
 	await expect(form.locator('[name="message"]')).toHaveValue('');
 	await page.locator('header a[href="/en"]').click();
@@ -67,7 +93,7 @@ test('keeps sending disabled and offers email when Turnstile cannot load', async
 		route.abort()
 	);
 	await page.goto('/en/contact');
-	await expect(page.locator('form .feedback')).toContainText('Unable to send');
+	await expect(page.locator('form .feedback').first()).toContainText('Unable to send');
 	await expect(page.locator('form button[type="submit"]')).toBeDisabled();
 	await expect(page.locator('main a[href^="mailto:"]').first()).toBeVisible();
 });

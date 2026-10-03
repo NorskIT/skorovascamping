@@ -30,6 +30,16 @@
 					? text.privacy
 					: text.cookies
 	);
+	const bookingDatesNotice = {
+		nb: 'Når du bruker «Søk og bestill», sendes valgte ankomst- og avreisedatoer til Campio i lenken. Overnattingstypene i feltet er informasjon om tilbudet vårt.',
+		en: 'When you use “Search and book”, your selected arrival and departure dates are passed to Campio in the link. The accommodation types shown describe what we offer.',
+		de: 'Bei „Suchen und buchen“ werden die gewählten Anreise- und Abreisedaten im Link an Campio übermittelt. Die angezeigten Unterkunftsarten beschreiben unser Angebot.'
+	};
+	const diagnosticsNotice = {
+		nb: 'Cloudflare brukes til drift, e-postsending og tekniske logger for feilsøking. Egne feillogger for kontaktskjemaet inneholder bare operasjon, feilkode og en tilfeldig referanse, ikke innholdet du sender. Cloudflare lagrer også tekniske opplysninger om forespørsler. Spørringsparametere skjules i Workers-loggene. Loggingen setter ingen ekstra informasjonskapsler.',
+		en: 'Cloudflare provides hosting, email delivery and technical logs for troubleshooting. Our contact-form error logs contain only the operation, error code and a random reference, not your submitted content. Cloudflare also stores technical request metadata. Query parameters are redacted in Workers logs. Logging sets no additional cookies.',
+		de: 'Cloudflare wird für Hosting, E-Mail-Versand und technische Protokolle zur Fehlerbehebung verwendet. Unsere Fehlerprotokolle zum Kontaktformular enthalten nur den Vorgang, einen Fehlercode und eine zufällige Referenz, nicht Ihre Angaben. Cloudflare speichert auch technische Anfragemetadaten. Abfrageparameter werden in Workers-Protokollen ausgeblendet. Die Protokollierung setzt keine zusätzlichen Cookies.'
+	};
 	const legal = {
 		nb: {
 			privacy: [
@@ -140,8 +150,11 @@
 			<p>{legal[route.locale][route.id][1]}</p>
 			<h2>{legal[route.locale][route.id][2]}</h2>
 			<p>{legal[route.locale][route.id][3]}</p>
+			<h2>Cloudflare</h2>
+			<p>{diagnosticsNotice[route.locale]}</p>
 			<h2>Campio</h2>
 			<p>{campioNotice[route.locale]}</p>
+			<p>{bookingDatesNotice[route.locale]}</p>
 			<a
 				href={`https://campio.no${route.locale === 'en' ? '' : `/${route.locale}`}/privacy-policy`}
 				>Campio – {text.privacy}</a
