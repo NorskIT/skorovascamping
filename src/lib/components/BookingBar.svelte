@@ -13,7 +13,6 @@
 			arrival: 'Ankomst',
 			departure: 'Avreise',
 			search: 'Søk og bestill',
-			hint: 'Bestillingen fortsetter hos Campio',
 			close: 'Lukk kalender',
 			previous: 'Forrige måned',
 			next: 'Neste måned',
@@ -25,7 +24,6 @@
 			arrival: 'Arrival',
 			departure: 'Departure',
 			search: 'Search and book',
-			hint: 'Continue your booking on Campio',
 			close: 'Close calendar',
 			previous: 'Previous month',
 			next: 'Next month',
@@ -37,7 +35,6 @@
 			arrival: 'Anreise',
 			departure: 'Abreise',
 			search: 'Suchen und buchen',
-			hint: 'Die Buchung wird bei Campio fortgesetzt',
 			close: 'Kalender schließen',
 			previous: 'Vorheriger Monat',
 			next: 'Nächster Monat',
@@ -200,7 +197,16 @@
 				<span class="label">{field === 'startDate' ? text.arrival : text.departure}</span>
 				<strong
 					>{label(field === 'startDate' ? startDate : endDate)}
-					<span aria-hidden="true">⌄</span></strong
+					<svg
+						class="date-chevron"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg
+					></strong
 				>
 			</button>
 		{/each}
@@ -208,7 +214,6 @@
 			>{text.search} <span aria-hidden="true">→</span></button
 		>
 	</form>
-	<p class="hint">{text.hint}</p>
 	{#if error}<p role="alert">{text.invalid}</p>{/if}
 </div>
 
@@ -349,8 +354,14 @@
 	}
 	.date-field strong {
 		display: flex;
+		align-items: center;
 		justify-content: space-between;
 		gap: 0.5rem;
+	}
+	.date-chevron {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
 	}
 	.search {
 		grid-column: 1 / -1;
@@ -362,12 +373,6 @@
 	}
 	.search:hover {
 		background: #103c2c;
-	}
-	.hint {
-		margin: 0.65rem 0 0;
-		text-align: center;
-		color: white;
-		font-size: 0.85rem;
 	}
 	[role='alert'] {
 		background: white;

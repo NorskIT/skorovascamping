@@ -86,12 +86,14 @@
 			<p class="eyebrow">{document.eyebrow}</p>
 			<h1>{document.heading}</h1>
 			<p class="intro">{document.description}</p>
-			<a
-				class="button"
-				href={bookingUrl(document.locale)}
-				rel="external"
-				onclick={trackBooking}>{text.book}</a
-			>
+			{#if document.id !== 'home'}
+				<a
+					class="button"
+					href={bookingUrl(document.locale)}
+					rel="external"
+					onclick={trackBooking}>{text.book}</a
+				>
+			{/if}
 		</div>
 		{#if document.id === 'home'}
 			<div class="wrap"><BookingBar locale={document.locale} /></div>
